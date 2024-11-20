@@ -2,10 +2,9 @@
   "name": "electron-react",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
-    "dev":"npm run dev:electron & npm run dev:react",
+    "dev": "npm run dev:electron & npm run dev:react",
     "dev:react": "vite",
     "dev:electron": "npm run transpile:electron && cross-env NODE_ENV=development electron .",
     "build": "tsc && vite build",
@@ -17,8 +16,12 @@
     "pack:win": "npm run transpile:electron && npm run build && electron-builder --win --x64"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "sonner": "^1.7.0",
+    "xterm": "^5.3.0",
+    "xterm-addon-fit": "^0.8.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
@@ -26,12 +29,15 @@
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.20",
     "cross-env": "^7.0.3",
     "electron": "^33.2.0",
     "electron-builder": "^25.1.8",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
   }

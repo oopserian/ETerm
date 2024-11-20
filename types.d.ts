@@ -1,0 +1,4 @@
+interface Window {
+    ssh: any
+}
+  

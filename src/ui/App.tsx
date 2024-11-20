@@ -1,30 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { CommandLineIcon, PlusIcon, RectangleGroupIcon, XMarkIcon } from "@heroicons/react/24/outline"
+import { Terminal } from 'xterm';
+import 'xterm/css/xterm.css';
+import { FitAddon } from 'xterm-addon-fit';
+import { useEffect, useRef } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
+  return (
+    <div className="w-full h-[100vh] flex overflow-hidden">
+      <SideBar></SideBar>
+      <div className="w-full h-full flex flex-col bg-white overflow-hidden">
+        <TabBar></TabBar>
+        <TerminalCom></TerminalCom>
+      </div>
+    </div>
+  )
+}
+
+function TerminalCom() {
+  const bgColor = '#212121';
+  const terminalRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const term = new Terminal({
+      cursorBlink: true, // 设置光标闪烁
+      fontSize: 14,
+      theme: {
+        background: bgColor
+      }
+    });
+    const fitAddon = new FitAddon();
+    term.loadAddon(fitAddon);
+    term.open(terminalRef.current!);
+    fitAddon.fit();
+    for (let i = 0; i < 100; i++) {
+      term.writeln('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' + i);
+    }
+
+    return () => {
+      term.dispose();
+    }
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div ref={terminalRef} className="flex-1 w-full" style={{ background: bgColor }}></div>
+  )
+}
+
+function TabBar() {
+  return (
+    <div className="flex p-2 gap-1 border-b border-gray-200">
+      <div className="cursor-pointer flex items-center gap-2 text-xs rounded-md px-3 py-2 hover:bg-zinc-100">
+        <p>我的终端机器</p>
+        <XMarkIcon className="w-4 h-4"></XMarkIcon>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div className="cursor-pointer flex items-center gap-2 text-xs rounded-md px-3 py-2 hover:bg-gray-100">
+        <p>我的终端机器</p>
+        <XMarkIcon className="w-4 h-4"></XMarkIcon>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
+  )
+}
+
+function SideBar() {
+  return (
+    <div className="p-3 flex flex-col gap-2 bg-zinc-100 text-zinc-500 border-gray-200 border-r">
+      <button className="w-6 h-6 p-1 mb-4 bg-white border-gray-200 border border-solid rounded-md">
+        <PlusIcon></PlusIcon>
+      </button>
+      <button className="w-6 h-6 p-1 rounded-md hover:bg-gray-200">
+        <CommandLineIcon></CommandLineIcon>
+      </button>
+      <button className="w-6 h-6 p-1 rounded-md hover:bg-gray-200">
+        <RectangleGroupIcon></RectangleGroupIcon>
+      </button>
+    </div>
   )
 }
 
