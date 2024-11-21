@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import path from "path";
 import { isDev, getPreloadPath } from "./utils";
+import SSH from "./ssh";
 
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({
@@ -17,4 +18,6 @@ app.on('ready', () => {
     } else {
         mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
     }
+
+    new SSH(mainWindow).registerHandlers();
 });

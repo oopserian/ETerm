@@ -5,9 +5,8 @@
     "paths": {
       "@types/*":["src/types/*"],
       "@main/*":["src/electron/*"],
-      "@ui/*":["src/ui/*"],
+      "@/*":["src/ui/*"]
     },
-    "typeRoots": ["src/types"],
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
