@@ -2,7 +2,6 @@ import { contextBridge, ipcRenderer } from "electron";
 
 export const ssh = {
     getData(){
-
     }
 }
 
