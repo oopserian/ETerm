@@ -11,4 +11,17 @@ export const ssh = {
     save: (data: sshData) => ipcInvoke('saveSSHData', data)
 };
 
+export const common = {
+    decryptPassword: (password: string, iv: string) => ipcInvoke('decryptPassword', password, iv)
+};
+
+export const terminal = {
+    input: (command: string) => ipcInvoke('terminalInput', command),
+    output() {
+
+    }
+};
+
 contextBridge.exposeInMainWorld('ssh', ssh);
+contextBridge.exposeInMainWorld('common', common);
+contextBridge.exposeInMainWorld('terminal', terminal);

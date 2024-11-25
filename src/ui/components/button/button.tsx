@@ -18,7 +18,7 @@ export const Button: React.FC<ButtonProps> = ({ children, className, variant = '
     };
 
     return (
-        <button {...props} className={cn('[&_svg]:size-4 flex gap-1 items-center justify-center',className, variantMapping[variant])}>
+        <button type="button" {...props} className={cn('[&_svg]:size-4 flex gap-1 items-center justify-center',className, variantMapping[variant])}>
             {children}
         </button>
     )

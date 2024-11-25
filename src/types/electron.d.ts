@@ -1,9 +1,11 @@
 interface sshData {
-    id: string,
+    id?: string,
+    host: string,
     port: string,
-    ip: string,
-    alias: string,
-    password: string
+    username: string,
+    password: string,
+    password_iv?: string,
+    alias: string
 }
 
 type EventPayloadMapping = {
@@ -14,5 +16,13 @@ type EventPayloadMapping = {
     getSSHData: {
         params: [],
         result: sshData[]
+    },
+    decryptPassword: {
+        params: [password: string, iv: string],
+        result: string
+    },
+    terminalInput:{
+        params: [command: string],
+        result: void
     }
 }

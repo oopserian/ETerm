@@ -3,12 +3,9 @@ import { Terminal } from 'xterm';
 import 'xterm/css/xterm.css';
 import { FitAddon } from 'xterm-addon-fit';
 import { useEffect, useRef, useState } from "react";
-import Dialog from "./components/dialog/dialog";
-import { FormItem, FormInput } from "./components/form/form";
-import { Button } from "./components/button/button"
+import { CreateSSHDialog } from "./modules/ssh";
 
 function App() {
-
   useEffect(() => {
     const fetchData = async () => {
       let res = await window.ssh.get();
@@ -49,6 +46,10 @@ function TerminalCom() {
       term.writeln('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' + i);
     }
 
+    term.onData((data) => {
+      window.terminal.input(data);
+    })
+
     return () => {
       term.dispose();
     }
@@ -74,36 +75,13 @@ function TabBar() {
   )
 }
 
+
 function SideBar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <>
-      <Dialog title="添加终端" open={isOpen} onClose={() => setIsOpen(false)}>
-        <form onSubmit={(e) => console.log(e)}>
-          <div className="flex flex-col gap-4">
-            <div className="flex gap-2">
-              <FormItem title="IP">
-                <FormInput></FormInput>
-              </FormItem>
-              <FormItem className="flex-1" title="端口">
-                <FormInput></FormInput>
-              </FormItem>
-            </div>
-            <FormItem title="用户名">
-              <FormInput></FormInput>
-            </FormItem>
-            <FormItem title="密码">
-              <FormInput type="password"></FormInput>
-            </FormItem>
-            <div className="flex gap-2">
-              <Button onClick={() => setIsOpen(false)} variant="secondary">取消</Button>
-              <Button type="submit">保存</Button>
-            </div>
-          </div>
-        </form>
-      </Dialog>
-
+      <CreateSSHDialog open={isOpen} onclose={() => setIsOpen(false)}></CreateSSHDialog>
       <div className="p-3 flex flex-col gap-2 bg-zinc-100 text-zinc-500 border-gray-200 border-r">
         <button onClick={() => setIsOpen(true)} className="w-6 h-6 p-1 mb-4 bg-white border-gray-200 border border-solid rounded-md">
           <PlusIcon></PlusIcon>
