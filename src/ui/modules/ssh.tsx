@@ -47,8 +47,8 @@ export const CreateSSHDialog: React.FC<{ open: boolean, onclose: () => void }> =
                         <FormInput name="password" type="password" value={form?.password} onChange={handleChange}></FormInput>
                     </FormItem>
                     <div className="flex gap-2">
-                        <Button onClick={onclose} variant="secondary">取消</Button>
-                        <Button type="submit">保存</Button>
+                        <Button onClick={onclose} variant="secondary" className="justify-center">取消</Button>
+                        <Button type="submit" className="justify-center">保存</Button>
                     </div>
                 </div>
             </form>

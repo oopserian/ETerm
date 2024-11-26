@@ -1,107 +1,58 @@
-import { CommandLineIcon, PlusIcon, RectangleGroupIcon, XMarkIcon } from "@heroicons/react/24/outline"
-import { Terminal } from 'xterm';
-import 'xterm/css/xterm.css';
-import { FitAddon } from 'xterm-addon-fit';
-import { useEffect, useRef, useState } from "react";
+import { Routes, Route, NavLink } from "react-router-dom";
+import { PlusIcon, ServerStackIcon } from "@heroicons/react/24/outline"
+import { useState } from "react";
 import { CreateSSHDialog } from "./modules/ssh";
+import { Home } from "./pages/home";
+import { Term } from "./pages/term";
+import { Button } from "./components/button/button";
 
 function App() {
   return (
-    <div className="w-full h-[100vh] flex overflow-hidden">
+    <div className="w-full h-[100vh] flex overflow-hidden bg-zinc-100">
       <SideBar></SideBar>
-      <div className="w-full h-full flex flex-col bg-white overflow-hidden">
-        <TabBar></TabBar>
-        <TerminalCom></TerminalCom>
+      <div className="w-full h-full flex flex-col overflow-hidden">
+        <ViewRoute></ViewRoute>
       </div>
     </div>
   )
 }
 
-function TerminalCom() {
-  const bgColor = '#212121';
-  const terminalRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      let res = await window.ssh.get();
-      Object.keys(res).forEach(key => {
-        createTerm(res[key])
-      })
-    };
-
-    const createTerm = (data: sshData) => {
-      console.log(data);
-      window.ssh.connect(data);
-      const term = new Terminal({
-        cursorBlink: true, // 设置光标闪烁
-        fontSize: 14,
-        theme: {
-          background: bgColor
-        }
-      });
-
-      window.terminal.subscribeOutput((data) => {
-        console.log(data)
-        term.write(data.data)
-      })
-
-      const fitAddon = new FitAddon();
-      term.loadAddon(fitAddon);
-      term.open(terminalRef.current!);
-      fitAddon.fit();
-
-      term.onData((command) => {
-        window.terminal.input({
-          id: data.id!,
-          command
-        });
-      })
-
-      return () => {
-        term.dispose();
-      }
-    }
-
-    fetchData();
-  }, []);
-
+function ViewRoute() {
   return (
-    <div ref={terminalRef} className="flex-1 w-full" style={{ background: bgColor }}></div>
-  )
-}
-
-function TabBar() {
-  return (
-    <div className="flex p-2 gap-1 border-b border-gray-200">
-      <div className="cursor-pointer flex items-center gap-2 text-xs rounded-md px-3 py-2 hover:bg-zinc-100">
-        <p>我的终端机器</p>
-        <XMarkIcon className="w-4 h-4"></XMarkIcon>
-      </div>
-      <div className="cursor-pointer flex items-center gap-2 text-xs rounded-md px-3 py-2 hover:bg-gray-100">
-        <p>我的终端机器</p>
-        <XMarkIcon className="w-4 h-4"></XMarkIcon>
-      </div>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />}></Route>
+      <Route path="/terminal" element={<Term />}></Route>
+    </Routes>
   )
 }
 
 
 function SideBar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
   return (
     <>
       <CreateSSHDialog open={isOpen} onclose={() => setIsOpen(false)}></CreateSSHDialog>
-      <div className="p-3 flex flex-col gap-2 bg-zinc-100 text-zinc-500 border-gray-200 border-r">
-        <button onClick={() => setIsOpen(true)} className="w-6 h-6 p-1 mb-4 bg-white border-gray-200 border border-solid rounded-md">
+      <div className="py-2 px-3 flex flex-col gap-1 text-zinc-500 w-full max-w-40">
+        <Button variant="outline" onClick={() => setIsOpen(true)} className="bg-white px-3 py-2 text-xs">
           <PlusIcon></PlusIcon>
-        </button>
-        <button className="w-6 h-6 p-1 rounded-md hover:bg-gray-200">
-          <CommandLineIcon></CommandLineIcon>
-        </button>
-        <button className="w-6 h-6 p-1 rounded-md hover:bg-gray-200">
-          <RectangleGroupIcon></RectangleGroupIcon>
-        </button>
+          <p>添加服务器</p>
+        </Button>
+        <NavLink to="/">
+          <Button variant="ghost" className="w-full px-3 py-2 text-xs">
+            <div className="size-4">
+              <ServerStackIcon></ServerStackIcon>
+            </div>
+            <p>服务器</p>
+          </Button>
+        </NavLink>
+        {/* <NavLink to="/terminal">
+          <Button variant="ghost" className="w-full px-3 py-2 text-xs">
+            <div className="size-4">
+              <RectangleGroupIcon></RectangleGroupIcon>
+            </div>
+            <p>多控</p>
+          </Button>
+        </NavLink> */}
       </div>
     </>
   )
