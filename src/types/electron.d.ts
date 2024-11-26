@@ -21,8 +21,12 @@ type EventPayloadMapping = {
         params: [password: string, iv: string],
         result: string
     },
-    terminalInput:{
-        params: [command: string],
+    terminalInput: {
+        params: [{id: string, command: string}],
+        result: void
+    },
+    terminalOutput: {
+        params: [{ id: string, data: any }],
         result: void
     }
 }

@@ -1,5 +1,6 @@
 import { BrowserWindow } from "electron";
-import { ipcMainHandle } from "../lib/utils";
+import { ipcMainHandle, ipcMainWebSend } from "../lib/utils";
+import { common } from "../preload";
 
 export default class Terminal {
     private mainWindow
@@ -7,12 +8,12 @@ export default class Terminal {
         this.mainWindow = mainWindow;
     }
     registerHandlers() {
-        ipcMainHandle('terminalInput', (_, command) => this.input(command));
+        ipcMainHandle('terminalInput', (_, data) => this.input(data.id, data.command));
     }
-    input(command: string) {
-        console.log(command)
+    input(id: string, command: any) {
+        console.log(id, command)
     }
-    output(){
-        
+    output(id: string, data: any) {
+        ipcMainWebSend(this.mainWindow, 'terminalOutput', { id, data });
     }
 }

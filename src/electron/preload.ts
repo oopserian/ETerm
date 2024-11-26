@@ -6,6 +6,13 @@ const ipcInvoke = <Key extends keyof EventPayloadMapping>(
     return ipcRenderer.invoke(key, ...args);
 };
 
+const ipcOn = <Key extends keyof EventPayloadMapping>(
+    key: Key,
+    callback: (payload: EventPayloadMapping[Key]['params'][0]) => void
+) => {
+    ipcRenderer.on(key, (_, payload) => callback(payload))
+};
+
 export const ssh = {
     get: () => ipcInvoke('getSSHData'),
     save: (data: sshData) => ipcInvoke('saveSSHData', data)
@@ -16,10 +23,8 @@ export const common = {
 };
 
 export const terminal = {
-    input: (command: string) => ipcInvoke('terminalInput', command),
-    output() {
-
-    }
+    input: (data: EventPayloadMapping['terminalInput']['params'][0]) => ipcInvoke('terminalInput', data),
+    subscribeOutput: (callback: (payload: EventPayloadMapping['terminalOutput']['params'][0]) => void) => ipcOn('terminalOutput', callback)
 };
 
 contextBridge.exposeInMainWorld('ssh', ssh);

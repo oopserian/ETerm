@@ -21,7 +21,8 @@ app.on('ready', () => {
         mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
     }
 
-    new SSH(mainWindow).registerHandlers();
+    const terminal = new Terminal(mainWindow);
+    terminal.registerHandlers();
     new Common(mainWindow).registerHandlers();
-    new Terminal(mainWindow).registerHandlers();
+    new SSH(mainWindow, terminal).registerHandlers();
 });

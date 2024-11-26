@@ -7,6 +7,9 @@ import { CreateSSHDialog } from "./modules/ssh";
 
 function App() {
   useEffect(() => {
+    window.terminal.subscribeOutput((data) => {
+      console.log(data);
+    })
     const fetchData = async () => {
       let res = await window.ssh.get();
       console.log(res);
@@ -47,7 +50,10 @@ function TerminalCom() {
     }
 
     term.onData((data) => {
-      window.terminal.input(data);
+      window.terminal.input({
+        id: '123',
+        command: data
+      });
     })
 
     return () => {
