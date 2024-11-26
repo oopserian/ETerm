@@ -1,4 +1,4 @@
-import { app, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import crypto from "crypto";
 import fs from "fs";
@@ -15,6 +15,14 @@ export const ipcMainHandle = <Key extends keyof EventPayloadMapping>(
     ) => EventPayloadMapping[Key]['result']
 ) => {
     ipcMain.handle(key, handle);
+};
+
+export const ipcMainWebSend = <Key extends keyof EventPayloadMapping>(
+    mainWindow: BrowserWindow,
+    key: Key,
+    ...args: EventPayloadMapping[Key]['params']
+) => {
+    mainWindow.webContents.send(key, ...args);
 };
 
 
