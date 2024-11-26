@@ -9,20 +9,24 @@ interface sshData {
 }
 
 type EventPayloadMapping = {
-    saveSSHData: {
+    saveSSH: {
         params: [data: sshData],
         result: void
     },
-    getSSHData: {
+    connectSSH: {
+        params: [data: sshData],
+        result: void
+    },
+    getSSH: {
         params: [],
-        result: sshData[]
+        result: Record<string,sshData>
     },
     decryptPassword: {
         params: [password: string, iv: string],
         result: string
     },
     terminalInput: {
-        params: [{id: string, command: string}],
+        params: [{ id: string, command: string }],
         result: void
     },
     terminalOutput: {

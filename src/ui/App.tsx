@@ -6,18 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import { CreateSSHDialog } from "./modules/ssh";
 
 function App() {
-  useEffect(() => {
-    window.terminal.subscribeOutput((data) => {
-      console.log(data);
-    })
-    const fetchData = async () => {
-      let res = await window.ssh.get();
-      console.log(res);
-    };
-
-    fetchData();
-  }, []);
-
   return (
     <div className="w-full h-[100vh] flex overflow-hidden">
       <SideBar></SideBar>
@@ -34,31 +22,47 @@ function TerminalCom() {
   const terminalRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const term = new Terminal({
-      cursorBlink: true, // 设置光标闪烁
-      fontSize: 14,
-      theme: {
-        background: bgColor
-      }
-    });
-    const fitAddon = new FitAddon();
-    term.loadAddon(fitAddon);
-    term.open(terminalRef.current!);
-    fitAddon.fit();
-    for (let i = 0; i < 100; i++) {
-      term.writeln('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' + i);
-    }
+    const fetchData = async () => {
+      let res = await window.ssh.get();
+      Object.keys(res).forEach(key => {
+        createTerm(res[key])
+      })
+    };
 
-    term.onData((data) => {
-      window.terminal.input({
-        id: '123',
-        command: data
+    const createTerm = (data: sshData) => {
+      console.log(data);
+      window.ssh.connect(data);
+      const term = new Terminal({
+        cursorBlink: true, // 设置光标闪烁
+        fontSize: 14,
+        theme: {
+          background: bgColor
+        }
       });
-    })
 
-    return () => {
-      term.dispose();
+      window.terminal.subscribeOutput((data) => {
+        console.log(data)
+        term.write(data.data)
+      })
+
+      const fitAddon = new FitAddon();
+      term.loadAddon(fitAddon);
+      term.open(terminalRef.current!);
+      fitAddon.fit();
+
+      term.onData((command) => {
+        window.terminal.input({
+          id: data.id!,
+          command
+        });
+      })
+
+      return () => {
+        term.dispose();
+      }
     }
+
+    fetchData();
   }, []);
 
   return (

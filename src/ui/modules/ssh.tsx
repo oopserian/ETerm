@@ -41,7 +41,7 @@ export const CreateSSHDialog: React.FC<{ open: boolean, onclose: () => void }> =
                         </FormItem>
                     </div>
                     <FormItem title="用户名">
-                        <FormInput name="host" value={form?.host} onChange={handleChange}></FormInput>
+                        <FormInput name="username" value={form?.username} onChange={handleChange}></FormInput>
                     </FormItem>
                     <FormItem title="密码">
                         <FormInput name="password" type="password" value={form?.password} onChange={handleChange}></FormInput>

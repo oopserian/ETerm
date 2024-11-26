@@ -1,30 +1,29 @@
 import { BrowserWindow } from "electron";
 import { DataStorage, Encryption, ipcMainHandle } from "../lib/utils";
-import { Client, ClientChannel } from "ssh2";
+import { Client } from "ssh2";
 import Terminal from "./terminal";
 
 export default class SSH {
-    clients: Record<string, { client: Client, stream: ClientChannel | null }> = {}
     private mainWindow
-    private terminal
+    private Terminal
     constructor(mainWindow: BrowserWindow, terminal: Terminal) {
         this.mainWindow = mainWindow;
-        this.terminal = terminal;
+        this.Terminal = terminal;
     }
     registerHandlers() {
-        ipcMainHandle('saveSSHData', (_, data) => this.save(data));
-        ipcMainHandle('getSSHData', () => this.get());
+        ipcMainHandle('saveSSH', (_, data) => this.save(data));
+        ipcMainHandle('getSSH', () => this.get());
+        ipcMainHandle('connectSSH', (_, data) => this.connect(data));
     }
     connect(data: sshData) {
-        let client = new Client();
         let id = data.id!;
-        this.clients[id].client = client;
+        let client = new Client();
         let password = Encryption.decryptPassword(data.password, data.password_iv!);
         client.on('ready', () => {
             client.shell((err, stream) => {
-                this.clients[data.id!].stream = stream;
+                this.Terminal.create(id, client, stream);
                 stream.on('data', (res: any) => {
-                    this.terminal.output(id, res)
+                    this.Terminal.output(id, res)
                 })
             })
         }).connect({
@@ -47,7 +46,7 @@ export default class SSH {
         };
         dataStorage.save(sshData, 'ssh-data.json');
     }
-    get(): sshData[] {
+    get() {
         let dataStorage = new DataStorage();
         let sshData = dataStorage.load('ssh-data.json') || {};
         return sshData;

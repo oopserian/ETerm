@@ -14,8 +14,9 @@ const ipcOn = <Key extends keyof EventPayloadMapping>(
 };
 
 export const ssh = {
-    get: () => ipcInvoke('getSSHData'),
-    save: (data: sshData) => ipcInvoke('saveSSHData', data)
+    get: () => ipcInvoke('getSSH'),
+    save: (data: sshData) => ipcInvoke('saveSSH', data),
+    connect: (data: sshData) => { ipcInvoke('connectSSH', data) }
 };
 
 export const common = {
