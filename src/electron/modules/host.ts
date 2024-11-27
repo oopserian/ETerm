@@ -24,7 +24,7 @@ export default class Host {
                 client.shell((err, stream) => {
                     if (err) {
                         reject(err)
-                        throw err
+                        // throw err
                     };
                     this.Terminal.create(termId, client, stream);
                     stream.on('data', (res: any) => {
@@ -33,12 +33,12 @@ export default class Host {
                     resolve(termId)
                 })
             }).on('error', (err) => {
-                let errStr = JSON.stringify(err);
-                this.Terminal.output(termId, `连接错误: ${errStr}\r\n`);
+                // let errStr = JSON.stringify(err);
+                // this.Terminal.output(termId, `连接错误: ${errStr}\r\n`);
                 reject(err)
-                throw err
+                // throw err
             }).on('close', () => {
-                this.Terminal.output(termId, '已断开连接\r\n');
+                // this.Terminal.output(termId, '已断开连接\r\n');
             }).connect({
                 host: data.host,
                 port: Number(data.port),

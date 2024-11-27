@@ -2,6 +2,7 @@ import { ServerIcon } from "@heroicons/react/24/outline"
 import React, { useEffect, useMemo } from "react"
 import useHostStore from "@/stores/useHostStore"
 import useTerminalStore from "@/stores/useTerminalStore";
+import { toast } from "sonner";
 
 export const Home = React.memo(() => {
     const { hosts, getHosts } = useHostStore();
@@ -31,8 +32,12 @@ export const Home = React.memo(() => {
 const HostItem: React.FC<{ host: hostData }> = ({ host }) => {
     let { setTerminal } = useTerminalStore();
     const connectHost = async () => {
-        let id = await window.host.connect(host);
-        setTerminal({ id, host });
+        try{
+            let id = await window.host.connect(host);
+            setTerminal({ id, host });
+        }catch(err:any){
+            toast.error(err.message)
+        }
     }
 
     return (
