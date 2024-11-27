@@ -1,24 +1,22 @@
 import { ServerIcon } from "@heroicons/react/24/outline"
-import { useEffect, useState } from "react"
-export function Home() {
-    const [hosts, setHosts] = useState<sshData[]>([]);
+import { useEffect, useMemo } from "react"
+import useHostStore from "@/stores/useHostStore"
 
-    const getSSH = async () => {
-        let res = await window.ssh.get();
-        setHosts(Object.values(res));
-    };
+export function Home() {
+    const { hosts, getHosts } = useHostStore();
+    const hostList = useMemo(() => Object.values(hosts), [hosts]);
 
     useEffect(() => {
-        getSSH();
+        getHosts();
     }, []);
 
     return (
-        <div className="py-3 flex flex-col gap-2">
+        <div className="py-3 pr-3 flex flex-col gap-2">
             <p className="font-medium text-lg">服务器</p>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
                 {
-                    hosts.length ? (
-                        hosts.map((item) => (
+                    hostList.length ? (
+                        hostList.map((item) => (
                             <HostItem key={item.id} data={item}></HostItem>
                         ))
                     ) : ''

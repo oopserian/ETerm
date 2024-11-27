@@ -1,5 +1,5 @@
 import { Routes, Route, NavLink } from "react-router-dom";
-import { PlusIcon, ServerStackIcon } from "@heroicons/react/24/outline"
+import { CodeBracketIcon, PlusIcon, ServerStackIcon } from "@heroicons/react/24/outline"
 import { useState } from "react";
 import { CreateSSHDialog } from "./modules/ssh";
 import { Home } from "./pages/home";
@@ -29,6 +29,20 @@ function ViewRoute() {
 
 function SideBar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const navs = [
+    {
+      path: "/",
+      icon: <ServerStackIcon />,
+      title: "服务器"
+    },
+    {
+      path: "/ftp",
+      icon: <CodeBracketIcon />,
+      title: "命令片段"
+    }
+  ]
+
   return (
     <>
       <CreateSSHDialog open={isOpen} onclose={() => setIsOpen(false)}></CreateSSHDialog>
@@ -37,22 +51,18 @@ function SideBar() {
           <PlusIcon></PlusIcon>
           <p>添加服务器</p>
         </Button>
-        <NavLink to="/">
-          <Button variant="ghost" className="w-full px-3 py-2 text-xs">
-            <div className="size-4">
-              <ServerStackIcon></ServerStackIcon>
-            </div>
-            <p>服务器</p>
-          </Button>
-        </NavLink>
-        {/* <NavLink to="/terminal">
-          <Button variant="ghost" className="w-full px-3 py-2 text-xs">
-            <div className="size-4">
-              <RectangleGroupIcon></RectangleGroupIcon>
-            </div>
-            <p>多控</p>
-          </Button>
-        </NavLink> */}
+        {
+          navs.map((nav, index) => (
+            <NavLink key={index} to={nav.path} className={({ isActive }) => isActive ? "[&_button]:bg-white" : ""}>
+              <Button variant="ghost" className="w-full px-3 py-2 text-xs">
+                <div className="size-4">
+                  {nav.icon}
+                </div>
+                <p>{nav.title}</p>
+              </Button>
+            </NavLink>
+          ))
+        }
       </div>
     </>
   )

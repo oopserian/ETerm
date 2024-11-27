@@ -2,8 +2,13 @@ import { Button } from "@/components/button/button";
 import Dialog from "@/components/dialog/dialog";
 import { FormInput, FormItem } from "@/components/form/form";
 import { useState } from "react";
+import useHostStore from "@/stores/useHostStore";
+import { toast } from "sonner";
 
 export const CreateSSHDialog: React.FC<{ open: boolean, onclose: () => void }> = ({ open, onclose }) => {
+    const { getHosts } = useHostStore();
+
+
     const [form, setForm] = useState<sshData>({
         host: '',
         port: '',
@@ -23,10 +28,13 @@ export const CreateSSHDialog: React.FC<{ open: boolean, onclose: () => void }> =
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         window.ssh.save(form);
+        getHosts();
+        onclose();
+        toast("🎉 成功添加服务器");
     };
 
     return (
-        <Dialog title="添加SSH" open={open} onClose={onclose}>
+        <Dialog title="添加服务器" open={open} onClose={onclose}>
             <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-4">
                     <FormItem title="别名">
