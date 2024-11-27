@@ -25,7 +25,8 @@ export const common = {
 
 export const terminal = {
     input: (data: EventPayloadMapping['terminalInput']['params'][0]) => ipcInvoke('terminalInput', data),
-    subscribeOutput: (callback: (payload: EventPayloadMapping['terminalOutput']['params'][0]) => void) => ipcOn('terminalOutput', callback)
+    subscribeOutput: (callback: (payload: EventPayloadMapping['terminalOutput']['params'][0]) => void) => ipcOn('terminalOutput', callback),
+    getSessionLogs: (id:string) => ipcInvoke('getTerminalSessionLog',id)
 };
 
 contextBridge.exposeInMainWorld('host', host);

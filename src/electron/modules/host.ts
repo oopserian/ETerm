@@ -16,10 +16,9 @@ export default class Host {
         ipcMainHandle('connectHost', (_, data) => this.connect(data));
     }
     connect(data: hostData): Promise<string> {
-        let id = data.id!;
-        let termId = new Date().getTime().toString();
-        let client = new Client();
         return new Promise((resolve, reject) => {
+            let termId = new Date().getTime().toString();
+            let client = new Client();
             let password = Encryption.decryptPassword(data.password, data.password_iv!);
             client.on('ready', () => {
                 client.shell((err, stream) => {
@@ -29,17 +28,17 @@ export default class Host {
                     };
                     this.Terminal.create(termId, client, stream);
                     stream.on('data', (res: any) => {
-                        this.Terminal.output(id, res)
+                        this.Terminal.output(termId, res)
                     });
                     resolve(termId)
                 })
             }).on('error', (err) => {
                 let errStr = JSON.stringify(err);
-                this.Terminal.output(id, `连接错误: ${errStr}\r\n`);
+                this.Terminal.output(termId, `连接错误: ${errStr}\r\n`);
                 reject(err)
                 throw err
             }).on('close', () => {
-                this.Terminal.output(id, '已断开连接\r\n');
+                this.Terminal.output(termId, '已断开连接\r\n');
             }).connect({
                 host: data.host,
                 port: Number(data.port),

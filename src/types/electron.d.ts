@@ -32,5 +32,9 @@ type EventPayloadMapping = {
     terminalOutput: {
         params: [{ id: string, data: any }],
         result: void
+    },
+    getTerminalSessionLog:{
+        params: [id: string],
+        result: string
     }
 }
