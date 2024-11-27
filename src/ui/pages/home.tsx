@@ -1,8 +1,9 @@
 import { ServerIcon } from "@heroicons/react/24/outline"
-import { useEffect, useMemo } from "react"
+import React, { useEffect, useMemo } from "react"
 import useHostStore from "@/stores/useHostStore"
+import useTerminalStore from "@/stores/useTerminalStore";
 
-export function Home() {
+export const Home = React.memo(() => {
     const { hosts, getHosts } = useHostStore();
     const hostList = useMemo(() => Object.values(hosts), [hosts]);
 
@@ -17,27 +18,33 @@ export function Home() {
                 {
                     hostList.length ? (
                         hostList.map((item) => (
-                            <HostItem key={item.id} data={item}></HostItem>
+                            <HostItem key={item.id} host={item}></HostItem>
                         ))
                     ) : ''
                 }
             </div>
         </div>
     )
-}
+});
 
 
-const HostItem: React.FC<{ data: sshData }> = ({ data }) => {
+const HostItem: React.FC<{ host: hostData }> = ({ host }) => {
+    let { setTerminal } = useTerminalStore();
+    const connectHost = async () => {
+        let id = await window.host.connect(host);
+        setTerminal({ id, host });
+    }
+
     return (
-        <div className="cursor-pointer flex items-center gap-2 w-full p-3 rounded-xl shadow-sm border border-zinc-200 bg-white hover:bg-zinc-50">
+        <div onClick={connectHost} className="cursor-pointer flex items-center gap-2 w-full p-3 rounded-xl shadow-sm border border-zinc-200 bg-white hover:bg-zinc-50">
             <div className="size-8 p-1.5 bg-slate-600 rounded-lg text-white">
                 <ServerIcon></ServerIcon>
             </div>
             <div className="flex flex-col">
-                <p className="text-xs">{data.alias}</p>
+                <p className="text-xs">{host.alias}</p>
                 <div className="flex text-xs text-zinc-500">
                     <p>ssh</p>,
-                    <p>{data.username}</p>
+                    <p>{host.username}</p>
                 </div>
             </div>
         </div>

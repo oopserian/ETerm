@@ -1,15 +1,17 @@
 import { Routes, Route, NavLink } from "react-router-dom";
-import { CodeBracketIcon, PlusIcon, ServerStackIcon } from "@heroicons/react/24/outline"
-import { useState } from "react";
+import { CodeBracketIcon, PlusIcon, ServerStackIcon, ServerIcon } from "@heroicons/react/24/outline"
+import { useMemo, useState } from "react";
 import { CreateSSHDialog } from "./modules/ssh";
 import { Home } from "./pages/home";
-import { Term } from "./pages/term";
+import { Term } from "./pages/terminal";
+import { Snippet } from "./pages/snippet";
 import { Button } from "./components/button/button";
+import useTerminalStore from "./stores/useTerminalStore";
 
 function App() {
   return (
     <div className="w-full h-[100vh] flex overflow-hidden bg-zinc-100">
-      <SideBar></SideBar>
+      <Navs></Navs>
       <div className="w-full h-full flex flex-col overflow-hidden">
         <ViewRoute></ViewRoute>
       </div>
@@ -21,14 +23,17 @@ function ViewRoute() {
   return (
     <Routes>
       <Route path="/" element={<Home />}></Route>
-      <Route path="/terminal" element={<Term />}></Route>
+      <Route path="/terminal/:id" element={<Term />}></Route>
+      <Route path="/snippets" element={<Snippet />}></Route>
     </Routes>
   )
 }
 
 
-function SideBar() {
+const Navs = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { terminals } = useTerminalStore();
+  const terminalList = useMemo(() => Object.values(terminals), [terminals]);
 
   const navs = [
     {
@@ -37,11 +42,11 @@ function SideBar() {
       title: "服务器"
     },
     {
-      path: "/ftp",
+      path: "/snippets",
       icon: <CodeBracketIcon />,
       title: "命令片段"
     }
-  ]
+  ];
 
   return (
     <>
@@ -63,9 +68,21 @@ function SideBar() {
             </NavLink>
           ))
         }
+        {
+          terminalList.map(term => (
+            <NavLink key={term.id} to={'/terminal/' + term.id} className={({ isActive }) => isActive ? "[&_button]:bg-white" : ""}>
+              <Button variant="ghost" className="w-full px-3 py-2 text-xs">
+                <div className="size-4">
+                  <ServerIcon />
+                </div>
+                <p>{term.host.alias}</p>
+              </Button>
+            </NavLink>
+          ))
+        }
       </div>
     </>
   )
-}
+};
 
 export default App

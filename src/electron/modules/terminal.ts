@@ -1,6 +1,5 @@
 import { BrowserWindow } from "electron";
 import { ipcMainHandle, ipcMainWebSend } from "../lib/utils";
-import { common } from "../preload";
 import { Client, ClientChannel } from "ssh2";
 
 export default class Terminal {
@@ -16,7 +15,7 @@ export default class Terminal {
         this.terms[id] = {
             client,
             stream: stream || null
-        }
+        };
     }
     input(id: string, command: any) {
         console.log(id, command)

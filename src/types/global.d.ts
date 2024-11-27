@@ -1,8 +1,8 @@
-import { ssh, common, terminal } from "@main/preload";
+import { host, common, terminal } from "@main/preload";
 
 declare global {
     interface Window {
-        ssh: typeof ssh
+        host: typeof host
         common: typeof common
         terminal: typeof terminal
     }

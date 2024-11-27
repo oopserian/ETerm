@@ -9,7 +9,7 @@ export const CreateSSHDialog: React.FC<{ open: boolean, onclose: () => void }> =
     const { getHosts } = useHostStore();
 
 
-    const [form, setForm] = useState<sshData>({
+    const [form, setForm] = useState<hostData>({
         host: '',
         port: '',
         username: '',
@@ -27,7 +27,7 @@ export const CreateSSHDialog: React.FC<{ open: boolean, onclose: () => void }> =
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        window.ssh.save(form);
+        window.host.save(form);
         getHosts();
         onclose();
         toast("🎉 成功添加服务器");

@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import path from "path";
 import { isDev, getPreloadPath } from "./lib/utils";
-import SSH from "./modules/ssh";
+import Host from "./modules/host";
 import Common from "./modules/common";
 import Terminal from "./modules/terminal";
 
@@ -24,5 +24,5 @@ app.on('ready', () => {
     const terminal = new Terminal(mainWindow);
     terminal.registerHandlers();
     new Common(mainWindow).registerHandlers();
-    new SSH(mainWindow, terminal).registerHandlers();
+    new Host(mainWindow, terminal).registerHandlers();
 });

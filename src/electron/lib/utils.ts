@@ -27,10 +27,10 @@ export const ipcMainWebSend = <Key extends keyof EventPayloadMapping>(
 
 
 // 数据存储类
-type FileNameType = 'ssh-data.json' | 'tag-data.json' | 'command-data.json';
+type FileNameType = 'host-data.json' | 'tag-data.json' | 'command-data.json';
 export class DataStorage {
     private dataFolderPath = ''
-    private whiteFiles: FileNameType[] = ['ssh-data.json', 'tag-data.json', 'command-data.json']
+    private whiteFiles: FileNameType[] = ['host-data.json', 'tag-data.json', 'command-data.json']
     constructor(folderName = 'data') {
         this.dataFolderPath = path.join(app.getPath('userData'), folderName);
         this.ensureFolderExists();
