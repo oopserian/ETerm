@@ -75,7 +75,7 @@ const Navs = () => {
                 <div className="size-4">
                   <ServerIcon />
                 </div>
-                <p>{term.host.alias}</p>
+                <p className="text-nowrap text-ellipsis overflow-hidden">{term.host.alias}</p>
               </Button>
             </NavLink>
           ))
