@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 interface HostStore {
-    hosts: Record<string, hostData>,
-    setHosts: (hosts: Record<string, hostData>) => void
+    hosts: Record<string, HostData>,
+    setHosts: (hosts: Record<string, HostData>) => void
     getHosts: () => void
 }
 

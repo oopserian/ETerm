@@ -9,14 +9,16 @@ const ipcInvoke = <Key extends keyof EventPayloadMapping>(
 const ipcOn = <Key extends keyof EventPayloadMapping>(
     key: Key,
     callback: (payload: EventPayloadMapping[Key]['params'][0]) => void
-) => {
-    ipcRenderer.on(key, (_, payload) => callback(payload))
+):() => void => {
+    const cb = (_:Electron.IpcRendererEvent, payload:any) => callback(payload);
+    ipcRenderer.on(key, cb);
+    return () => ipcRenderer.off(key, cb);
 };
 
 export const host = {
     get: () => ipcInvoke('getHost'),
-    save: (data: hostData) => ipcInvoke('saveHost', data),
-    connect: (data: hostData) => ipcInvoke('connectHost', data)
+    save: (data: HostData) => ipcInvoke('saveHost', data),
+    connect: (data: HostData) => ipcInvoke('connectHost', data)
 };
 
 export const common = {
@@ -24,9 +26,10 @@ export const common = {
 };
 
 export const terminal = {
-    input: (data: EventPayloadMapping['terminalInput']['params'][0]) => ipcInvoke('terminalInput', data),
     subscribeOutput: (callback: (payload: EventPayloadMapping['terminalOutput']['params'][0]) => void) => ipcOn('terminalOutput', callback),
-    getSessionLogs: (id:string) => ipcInvoke('getTerminalSessionLog',id)
+    subscribeUpdate: (callback: (payload: EventPayloadMapping['terminalUpdate']['params'][0]) => void) => ipcOn('terminalUpdate', callback),
+    input: (data: EventPayloadMapping['terminalInput']['params'][0]) => ipcInvoke('terminalInput', data),
+    getSessionLogs: (id:string) => ipcInvoke('getTerminalSessionLog',id),
 };
 
 contextBridge.exposeInMainWorld('host', host);

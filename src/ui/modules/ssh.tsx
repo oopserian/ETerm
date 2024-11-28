@@ -9,7 +9,7 @@ export const CreateSSHDialog: React.FC<{ open: boolean, onclose: () => void }> =
     const { getHosts } = useHostStore();
 
 
-    const [form, setForm] = useState<hostData>({
+    const [form, setForm] = useState<HostData>({
         host: '',
         port: '',
         username: '',

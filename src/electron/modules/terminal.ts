@@ -2,10 +2,11 @@ import { BrowserWindow } from "electron";
 import { ipcMainHandle, ipcMainWebSend } from "../lib/utils";
 import { Client, ClientChannel } from "ssh2";
 
-interface TerminalData{
+export interface TerminalData{
     client: Client,
     stream: ClientChannel | null,
-    history: any
+    sessionLogs: any,
+    status: TerminalStatus
 }
 
 export default class Terminal {
@@ -22,17 +23,26 @@ export default class Terminal {
         this.terms[id] = {
             client,
             stream: stream || null,
-            history: ''
+            sessionLogs: '',
+            status: 'connecting'
         };
     }
     getSessionLog(id:string){
-        return this.terms[id].history;
+        return this.terms[id].sessionLogs;
     }
     input(id: string, command: any) {
         this.terms[id].stream?.write(command);
     }
     output(id: string, data: any) {
-        this.terms[id].history += data;
+        this.terms[id].sessionLogs += data;
         ipcMainWebSend(this.mainWindow, 'terminalOutput', { id, data });
+    }
+    update(id: string, data: Partial<TerminalData>){
+        this.terms[id] = {
+            ...this.terms[id],
+            ...data
+        };
+        let {status} = this.terms[id];
+        ipcMainWebSend(this.mainWindow,'terminalUpdate',{id,status})
     }
 }

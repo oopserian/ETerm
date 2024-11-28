@@ -1,4 +1,4 @@
-interface hostData {
+interface HostData {
     id?: string,
     host: string,
     port: string,
@@ -8,18 +8,26 @@ interface hostData {
     alias: string
 }
 
+type TerminalStatus = 'connecting' 
+| 'connected' 
+| 'disconnect' 
+| 'authFailed' 
+| 'closed' 
+| 'error' 
+| ''
+
 type EventPayloadMapping = {
     saveHost: {
-        params: [data: hostData],
+        params: [data: HostData],
         result: void
     },
     connectHost: {
-        params: [data: hostData],
+        params: [data: HostData],
         result: Promise<string>
     },
     getHost: {
         params: [],
-        result: Record<string,hostData>
+        result: Record<string,HostData>
     },
     decryptPassword: {
         params: [password: string, iv: string],
@@ -31,6 +39,10 @@ type EventPayloadMapping = {
     },
     terminalOutput: {
         params: [{ id: string, data: any }],
+        result: void
+    },
+    terminalUpdate:{
+        params: [{id:string, status:TerminalStatus}],
         result: void
     },
     getTerminalSessionLog:{

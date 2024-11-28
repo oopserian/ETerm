@@ -15,29 +15,44 @@ export default class Host {
         ipcMainHandle('getHost', () => this.get());
         ipcMainHandle('connectHost', (_, data) => this.connect(data));
     }
-    connect(data: hostData): Promise<string> {
+    connect(data: HostData): Promise<string> {
         return new Promise((resolve, reject) => {
             let termId = new Date().getTime().toString();
             let client = new Client();
+            this.Terminal.create(termId, client);
+            resolve(termId)
             let password = Encryption.decryptPassword(data.password, data.password_iv!);
             client.on('ready', () => {
                 client.shell((err, stream) => {
                     if (err) {
+                        this.Terminal.update(termId,{
+                            status: 'authFailed'
+                        })
                         reject(err)
                         // throw err
                     };
-                    this.Terminal.create(termId, client, stream);
-                    stream.on('data', (res: any) => {
-                        this.Terminal.output(termId, res)
+
+                    this.Terminal.update(termId, {
+                        stream,
+                        status: 'connected'
                     });
-                    resolve(termId)
+                    
+                    stream.on('data', (res: any) => {
+                        this.Terminal.output(termId, res);
+                    });
                 })
             }).on('error', (err) => {
                 // let errStr = JSON.stringify(err);
                 // this.Terminal.output(termId, `连接错误: ${errStr}\r\n`);
+                this.Terminal.update(termId,{
+                    status: 'error'
+                })
                 reject(err)
                 // throw err
             }).on('close', () => {
+                this.Terminal.update(termId,{
+                    status: 'closed'
+                })
                 // this.Terminal.output(termId, '已断开连接\r\n');
             }).connect({
                 host: data.host,
@@ -47,7 +62,7 @@ export default class Host {
             })
         })
     }
-    save(data: hostData) {
+    save(data: HostData) {
         let dataStorage = new DataStorage();
         let hostData = dataStorage.load('host-data.json') || {};
         let id = `${data.host}:${data.port}`;
