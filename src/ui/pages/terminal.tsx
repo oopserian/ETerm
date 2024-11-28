@@ -1,7 +1,7 @@
-import 'xterm/css/xterm.css';
+import '@xterm/xterm/css/xterm.css';
 import React, { useEffect, useRef } from "react";
-import { Terminal } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
+import { Terminal } from "@xterm/xterm";
+import { FitAddon } from "@xterm/addon-fit";
 import { useParams } from 'react-router-dom';
 
 export function Term() {
@@ -22,12 +22,23 @@ const TerminalCom: React.FC = () => {
     const terminalRef = useRef<HTMLDivElement | null>(null);
 
     const createTerm = () => {
+        const fitAddon = new FitAddon();
         let term = new Terminal({
-            cursorBlink: true, // 设置光标闪烁
             fontSize: 14,
             theme: {
                 background: bgColor
             }
+        });
+
+        term.loadAddon(fitAddon);
+        term.open(terminalRef.current!);
+        // fitAddon.fit();
+
+        term.onData((command) => {
+            window.terminal.input({
+                id: id!,
+                command
+            });
         });
 
         window.terminal.getSessionLogs(id!).then(logs=>{
@@ -37,18 +48,6 @@ const TerminalCom: React.FC = () => {
         window.terminal.subscribeOutput((data) => {
             term.write(data.data)
         });
-
-        const fitAddon = new FitAddon();
-        term.loadAddon(fitAddon);
-        term.open(terminalRef.current!);
-        fitAddon.fit();
-
-        term.onData((command) => {
-            window.terminal.input({
-                id: id!,
-                command
-            });
-        })
 
         return term;
     }
