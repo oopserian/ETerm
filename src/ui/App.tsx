@@ -76,7 +76,7 @@ const Navs = () => {
     e.preventDefault();
     e.stopPropagation();
     deleteTerminal(termId);
-    if(curTerminal?.id == termId){
+    if (curTerminal?.id == termId) {
       navigate("/");
     };
   }
@@ -101,28 +101,30 @@ const Navs = () => {
             </NavLink>
           ))
         }
-        {
-          terminalList.map(term => (
-            <NavLink key={term.id} to={'/terminal/' + term.id} className={({ isActive }) => isActive ? "[&_button]:bg-white" : ""}>
-              <Button variant="ghost" className="w-full p-1 text-xs group">
-                <div className={cn('relative size-6 flex items-center justify-center rounded-md text-white bg-slate-600')}>
-                  <div className={cn('absolute border-zinc-100 rounded-full p-0.5 -top-1 -left-1 size-3 text-[0.5rem] leading-[0.5rem] flex items-center justify-center border opacity-100 scale-100',
-                    { 'bg-blue-400': term.status == 'connecting' },
-                    { 'bg-lime-500 transition-[opacity,transform] duration-300 delay-500 opacity-0 scale-0': term.status == "connected" },
-                    { 'bg-red-500': term.status == "error" },
-                  )}>
-                    {statusIcon[term.status]}
+        <div className="flex flex-col gap-1 flex-1 overflow-auto">
+          {
+            terminalList.map(term => (
+              <NavLink key={term.id} to={'/terminal/' + term.id} className={({ isActive }) => isActive ? "[&_button]:bg-white" : ""}>
+                <Button variant="ghost" className="w-full p-1 text-xs group">
+                  <div className={cn('relative size-6 flex items-center justify-center rounded-md text-white bg-slate-600')}>
+                    <div className={cn('absolute border-zinc-100 rounded-full p-0.5 -top-1 -left-1 size-3 text-[0.5rem] leading-[0.5rem] flex items-center justify-center border opacity-100 scale-100',
+                      { 'bg-blue-400': term.status == 'connecting' },
+                      { 'bg-lime-500 transition-[opacity,transform] duration-300 delay-500 opacity-0 scale-0': term.status == "connected" },
+                      { 'bg-red-500': term.status == "error" },
+                    )}>
+                      {statusIcon[term.status]}
+                    </div>
+                    <ServerIcon />
                   </div>
-                  <ServerIcon />
-                </div>
-                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{term.host?.alias}</p>
-                <Button onClick={(e) => deleteTerm(e, term.id)} variant="ghost" className="opacity-0 size-6 p-1.5 justify-center group-hover:opacity-100 hover:bg-zinc-100">
-                  <XMarkIcon />
+                  <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{term.host?.alias}</p>
+                  <Button onClick={(e) => deleteTerm(e, term.id)} variant="ghost" className="opacity-0 size-6 p-1.5 justify-center group-hover:opacity-100 hover:bg-zinc-100">
+                    <XMarkIcon />
+                  </Button>
                 </Button>
-              </Button>
-            </NavLink>
-          ))
-        }
+              </NavLink>
+            ))
+          }
+        </div>
       </div>
     </>
   )
