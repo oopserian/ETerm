@@ -26,34 +26,32 @@ export default class Host {
             client.on('ready', () => {
                 client.shell((err, stream) => {
                     if (err) {
+                        let errStr = JSON.stringify(err);
+                        this.Terminal.output(termId, `\x1b[31m连接失败:\x1b[39m ${errStr}\r\n\r\n`);
                         this.Terminal.update(termId,{
-                            status: 'authFailed'
-                        })
+                            status: 'error'
+                        });
                         reject(err)
-                        // throw err
                     };
 
-                    this.Terminal.update(termId, {
-                        stream,
-                        status: 'connected'
-                    });
-                    
-                    stream.on('data', (res: any) => {
-                        this.Terminal.output(termId, res);
-                    });
+                    if(stream){
+                        this.Terminal.update(termId, {
+                            stream,
+                            status: 'connected'
+                        });
+    
+                        stream.on('data', (res: any) => {
+                            this.Terminal.output(termId, res);
+                        });
+                    }
                 })
             }).on('error', (err) => {
                 let errStr = JSON.stringify(err);
                 this.Terminal.output(termId, `\x1b[31m连接失败:\x1b[39m ${errStr}\r\n\r\n`);
-                this.Terminal.update(termId,{
-                    status: 'error'
-                });
+                this.Terminal.update(termId,{ status: 'error' });
                 reject(err)
-                // throw err
             }).on('close', () => {
-                // this.Terminal.update(termId,{
-                //     status: 'closed'
-                // })
+                // this.Terminal.update(termId,{ status: 'closed' });
                 this.Terminal.output(termId, '\x1b[31m已断开连接\x1b[39m\r\n');
             }).connect({
                 host: data.host,

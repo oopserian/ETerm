@@ -1,5 +1,5 @@
 import LoadingRing from "@/assets/loading-ring.svg";
-import { Routes, Route, NavLink, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, NavLink, useNavigate } from "react-router-dom";
 import { CodeBracketIcon, PlusIcon, ServerStackIcon, ServerIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline"
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { CreateSSHDialog } from "./modules/ssh";
@@ -115,7 +115,7 @@ const Navs = () => {
                   </div>
                   <ServerIcon />
                 </div>
-                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{term.host.alias}</p>
+                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{term.host?.alias}</p>
                 <Button onClick={(e) => deleteTerm(e, term.id)} variant="ghost" className="opacity-0 size-6 p-1.5 justify-center group-hover:opacity-100 hover:bg-zinc-100">
                   <XMarkIcon />
                 </Button>

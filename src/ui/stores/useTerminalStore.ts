@@ -31,15 +31,21 @@ const useTerminalStore = create<TerminalStore>((set) => ({
             [terminal.id]: terminal
         }
     })),
-    updateTerminal: (id, terminal) => set((state)=>({
-        terminals:{
-            ...state.terminals,
-            [id]:{
-                ...state.terminals[id],
-                ...terminal
-            }
+    updateTerminal: (id, terminal) => set((state)=>{
+         // 通过展开操作符创建一个新的终端对象
+        const terminals = { ...state.terminals };
+
+        if (terminals[id]) {
+            terminals[id] = {
+                ...terminals[id], // 保留现有的字段
+                ...terminal, // 更新传入的部分数据
+            };
         }
-    })),
+
+        return {
+            terminals, // 返回更新后的新的 terminals 对象
+        };
+    }),
     deleteTerminal: (id) => set((state) => {
         window.terminal.delete(id);
         const { [id]: _, ...remainingTerminals } = state.terminals; // 解构排除指定的 id
