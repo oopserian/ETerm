@@ -1,3 +1,4 @@
+import LoadingRing from "@/assets/loading-ring.svg";
 import { Routes, Route, NavLink } from "react-router-dom";
 import { CodeBracketIcon, PlusIcon, ServerStackIcon, ServerIcon } from "@heroicons/react/24/outline"
 import { useEffect, useMemo, useState } from "react";
@@ -71,8 +72,8 @@ const Navs = () => {
         {
           navs.map((nav, index) => (
             <NavLink key={index} to={nav.path} className={({ isActive }) => isActive ? "[&_button]:bg-white" : ""}>
-              <Button variant="ghost" className="w-full px-3 py-2 text-xs">
-                <div className="size-5  flex items-center justify-center">
+              <Button variant="ghost" className="w-full p-1 text-xs">
+                <div className="size-6 flex items-center justify-center">
                   {nav.icon}
                 </div>
                 <p>{nav.title}</p>
@@ -83,10 +84,13 @@ const Navs = () => {
         {
           terminalList.map(term => (
             <NavLink key={term.id} to={'/terminal/' + term.id} className={({ isActive }) => isActive ? "[&_button]:bg-white" : ""}>
-              <Button variant="ghost" className="w-full px-3 py-2 text-xs">
-                <div className={cn('size-5 flex items-center justify-center rounded-md',
-                  {'text-white bg-slate-600':(term.status == "connected")}
-                )}>
+              <Button variant="ghost" className="w-full p-1 text-xs">
+                <div className={cn('relative size-6 flex items-center justify-center rounded-md text-white bg-slate-600')}>
+                  <div className={cn('absolute bg-blue-400 rounded-full -top-1 -left-1 p-[1.5px] border border-zinc-100 opacity-100 scale-100 transition-[opacity,transform] duration-500',
+                    {'opacity-0 scale-0':term.status == "connected"}
+                  )}>
+                    <img className="size-2.5" src={LoadingRing}/>
+                  </div>
                   <ServerIcon />
                 </div>
                 <p className="text-nowrap text-ellipsis overflow-hidden">{term.host.alias}</p>
