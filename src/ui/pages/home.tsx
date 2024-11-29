@@ -30,7 +30,8 @@ export const Home = React.memo(() => {
 
 
 const HostItem: React.FC<{ host: HostData }> = ({ host }) => {
-    let { setTerminal } = useTerminalStore();
+    let { addTerminal: setTerminal } = useTerminalStore();
+    
     const connectHost = async () => {
         try{
             let id = await window.host.connect(host);

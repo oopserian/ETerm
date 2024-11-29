@@ -13,6 +13,7 @@ export default class Host {
     registerHandlers() {
         ipcMainHandle('saveHost', (_, data) => this.save(data));
         ipcMainHandle('getHost', () => this.get());
+        ipcMainHandle('deleteHost', (_, id) => this.delete(id));
         ipcMainHandle('connectHost', (_, data) => this.connect(data));
     }
     connect(data: HostData): Promise<string> {
@@ -42,18 +43,18 @@ export default class Host {
                     });
                 })
             }).on('error', (err) => {
-                // let errStr = JSON.stringify(err);
-                // this.Terminal.output(termId, `连接错误: ${errStr}\r\n`);
+                let errStr = JSON.stringify(err);
+                this.Terminal.output(termId, `\x1b[31m连接失败:\x1b[39m ${errStr}\r\n\r\n`);
                 this.Terminal.update(termId,{
                     status: 'error'
-                })
+                });
                 reject(err)
                 // throw err
             }).on('close', () => {
-                this.Terminal.update(termId,{
-                    status: 'closed'
-                })
-                // this.Terminal.output(termId, '已断开连接\r\n');
+                // this.Terminal.update(termId,{
+                //     status: 'closed'
+                // })
+                this.Terminal.output(termId, '\x1b[31m已断开连接\x1b[39m\r\n');
             }).connect({
                 host: data.host,
                 port: Number(data.port),
@@ -79,5 +80,11 @@ export default class Host {
         let dataStorage = new DataStorage();
         let hostData = dataStorage.load('host-data.json') || {};
         return hostData;
+    }
+    delete(id:string){
+        let dataStorage = new DataStorage();
+        let hostData = dataStorage.load('host-data.json') || {};
+        delete hostData[id];
+        dataStorage.save(hostData, 'host-data.json');
     }
 }

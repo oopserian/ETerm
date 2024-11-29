@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { useParams } from 'react-router-dom';
+import useTerminalStore from '@/stores/useTerminalStore';
 
 export function Term() {
     return (
@@ -17,6 +18,7 @@ export function Term() {
 
 const TerminalCom: React.FC = () => {
     const { id } = useParams();
+    const { setCurTerminal } = useTerminalStore();
 
     const bgColor = '#212121';
     const terminalRef = useRef<HTMLDivElement | null>(null);
@@ -41,7 +43,7 @@ const TerminalCom: React.FC = () => {
             });
         });
 
-        window.terminal.getSessionLogs(id!).then(logs=>{
+        window.terminal.getSessionLogs(id!).then(logs => {
             term.write(logs);
         });
 
@@ -54,6 +56,7 @@ const TerminalCom: React.FC = () => {
 
     useEffect(() => {
         let term = createTerm();
+        setCurTerminal(id!);
         return () => {
             term.dispose();
         }

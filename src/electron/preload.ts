@@ -18,7 +18,8 @@ const ipcOn = <Key extends keyof EventPayloadMapping>(
 export const host = {
     get: () => ipcInvoke('getHost'),
     save: (data: HostData) => ipcInvoke('saveHost', data),
-    connect: (data: HostData) => ipcInvoke('connectHost', data)
+    connect: (data: HostData) => ipcInvoke('connectHost', data),
+    delete: (id:string) => ipcInvoke('deleteHost',id)
 };
 
 export const common = {
@@ -30,6 +31,7 @@ export const terminal = {
     subscribeUpdate: (callback: (payload: EventPayloadMapping['terminalUpdate']['params'][0]) => void) => ipcOn('terminalUpdate', callback),
     input: (data: EventPayloadMapping['terminalInput']['params'][0]) => ipcInvoke('terminalInput', data),
     getSessionLogs: (id:string) => ipcInvoke('getTerminalSessionLog',id),
+    delete: (id:string) => ipcInvoke('terminalDelete',id)
 };
 
 contextBridge.exposeInMainWorld('host', host);

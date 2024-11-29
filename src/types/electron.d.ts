@@ -25,6 +25,10 @@ type EventPayloadMapping = {
         params: [data: HostData],
         result: Promise<string>
     },
+    deleteHost:{
+        params: [id:string],
+        result: void
+    },
     getHost: {
         params: [],
         result: Record<string,HostData>
@@ -45,6 +49,10 @@ type EventPayloadMapping = {
         params: [{id:string, status:TerminalStatus}],
         result: void
     },
+    terminalDelete:{
+        params: [id:string],
+        result: void
+    }
     getTerminalSessionLog:{
         params: [id: string],
         result: string

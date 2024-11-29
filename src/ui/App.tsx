@@ -1,7 +1,7 @@
 import LoadingRing from "@/assets/loading-ring.svg";
-import { Routes, Route, NavLink } from "react-router-dom";
-import { CodeBracketIcon, PlusIcon, ServerStackIcon, ServerIcon } from "@heroicons/react/24/outline"
-import { useEffect, useMemo, useState } from "react";
+import { Routes, Route, NavLink, Navigate, useNavigate } from "react-router-dom";
+import { CodeBracketIcon, PlusIcon, ServerStackIcon, ServerIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline"
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { CreateSSHDialog } from "./modules/ssh";
 import { Home } from "./pages/home";
 import { Term } from "./pages/terminal";
@@ -11,15 +11,15 @@ import useTerminalStore from "./stores/useTerminalStore";
 import { cn } from "./lib/utils";
 
 function App() {
-  const {updateTerminal} = useTerminalStore();
-  useEffect(()=>{
-    const unsub = window.terminal.subscribeUpdate((res)=>{
+  const { updateTerminal } = useTerminalStore();
+  useEffect(() => {
+    const unsub = window.terminal.subscribeUpdate((res) => {
       updateTerminal(res.id, res)
     })
     return () => {
       unsub();
     }
-  },[])
+  }, [])
 
 
   return (
@@ -44,8 +44,9 @@ function ViewRoute() {
 
 
 const Navs = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { terminals } = useTerminalStore();
+  const { terminals, curTerminal, deleteTerminal } = useTerminalStore();
   const terminalList = useMemo(() => Object.values(terminals), [terminals]);
 
   const navs = [
@@ -60,6 +61,25 @@ const Navs = () => {
       title: "命令片段"
     }
   ];
+
+  const statusIcon: Record<Partial<TerminalStatus>, ReactNode> = {
+    'closed': null,
+    'connected': <CheckIcon />,
+    'authFailed': null,
+    'connecting': <img src={LoadingRing} />,
+    'disconnect': null,
+    'error': <p>!</p>,
+    '': null
+  }
+
+  const deleteTerm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, termId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    deleteTerminal(termId);
+    if(curTerminal?.id == termId){
+      navigate("/");
+    };
+  }
 
   return (
     <>
@@ -84,16 +104,21 @@ const Navs = () => {
         {
           terminalList.map(term => (
             <NavLink key={term.id} to={'/terminal/' + term.id} className={({ isActive }) => isActive ? "[&_button]:bg-white" : ""}>
-              <Button variant="ghost" className="w-full p-1 text-xs">
+              <Button variant="ghost" className="w-full p-1 text-xs group">
                 <div className={cn('relative size-6 flex items-center justify-center rounded-md text-white bg-slate-600')}>
-                  <div className={cn('absolute bg-blue-400 rounded-full -top-1 -left-1 p-[1.5px] border border-zinc-100 opacity-100 scale-100 transition-[opacity,transform] duration-500',
-                    {'opacity-0 scale-0':term.status == "connected"}
+                  <div className={cn('absolute border-zinc-100 rounded-full p-0.5 -top-1 -left-1 size-3 text-[0.5rem] leading-[0.5rem] flex items-center justify-center border opacity-100 scale-100',
+                    { 'bg-blue-400': term.status == 'connecting' },
+                    { 'bg-lime-500 transition-[opacity,transform] duration-300 delay-500 opacity-0 scale-0': term.status == "connected" },
+                    { 'bg-red-500': term.status == "error" },
                   )}>
-                    <img className="size-2.5" src={LoadingRing}/>
+                    {statusIcon[term.status]}
                   </div>
                   <ServerIcon />
                 </div>
-                <p className="text-nowrap text-ellipsis overflow-hidden">{term.host.alias}</p>
+                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{term.host.alias}</p>
+                <Button onClick={(e) => deleteTerm(e, term.id)} variant="ghost" className="opacity-0 size-6 p-1.5 justify-center group-hover:opacity-100 hover:bg-zinc-100">
+                  <XMarkIcon />
+                </Button>
               </Button>
             </NavLink>
           ))
