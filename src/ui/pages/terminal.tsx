@@ -5,6 +5,7 @@ import { FitAddon } from "@xterm/addon-fit";
 import { useParams } from 'react-router-dom';
 import useTerminalStore from '@/stores/useTerminalStore';
 import { ServerIcon } from '@heroicons/react/24/outline';
+import { useDroppable } from '@dnd-kit/core';
 
 export function Terminal() {
     return (
@@ -17,10 +18,18 @@ export function Terminal() {
 }
 
 const SplitWrap: React.FC = () => {
+    const { isOver, setNodeRef } = useDroppable({
+        id: 'TerminalDroppable'
+    })
+
+    const style = {
+        opacity: isOver ? 0.5 : 1,
+    };
+
     return (
-        <div className="flex gap-2 flex-1 w-full h-full py-1 pr-1 overflow-auto">
+        <div ref={setNodeRef} style={style} className="flex gap-2 flex-1 w-full h-full py-1 pr-1 overflow-auto">
             <TerminalItem></TerminalItem>
-        </div> 
+        </div>
     )
 }
 
@@ -44,7 +53,9 @@ const TerminalItem: React.FC = () => {
 
         term.loadAddon(fitAddon);
         term.open(terminalRef.current!);
-        fitAddon.fit();
+
+        // TODO setTimeout临时处理xterm的dimensions报错
+        setTimeout(() => fitAddon.fit(), 0);
 
         term.onData((command) => {
             window.terminal.input({
