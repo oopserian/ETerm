@@ -4,7 +4,7 @@ import { CodeBracketIcon, PlusIcon, ServerStackIcon, ServerIcon, CheckIcon, XMar
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { CreateSSHDialog } from "./modules/ssh";
 import { Home } from "./pages/home";
-import { Term } from "./pages/terminal";
+import { Terminal } from "./pages/terminal";
 import { Snippet } from "./pages/snippet";
 import { Button } from "./components/button/button";
 import useTerminalStore from "./stores/useTerminalStore";
@@ -36,7 +36,7 @@ function ViewRoute() {
   return (
     <Routes>
       <Route path="/" element={<Home />}></Route>
-      <Route path="/terminal/:id" element={<Term />}></Route>
+      <Route path="/terminal/:id" element={<Terminal />}></Route>
       <Route path="/snippets" element={<Snippet />}></Route>
     </Routes>
   )

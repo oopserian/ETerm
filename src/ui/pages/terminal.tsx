@@ -1,34 +1,41 @@
 import '@xterm/xterm/css/xterm.css';
 import React, { useEffect, useMemo, useRef } from "react";
-import { Terminal } from "@xterm/xterm";
+import { Terminal as Xterm } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { useParams } from 'react-router-dom';
 import useTerminalStore from '@/stores/useTerminalStore';
 import { ServerIcon } from '@heroicons/react/24/outline';
 
-export function Term() {
+export function Terminal() {
     return (
         <>
             <div className="flex gap-2 flex-1 w-full h-full py-1 pr-1 overflow-auto">
-                <TerminalCom></TerminalCom>
+                <SplitWrap></SplitWrap>
             </div>
         </>
     )
 }
 
+const SplitWrap: React.FC = () => {
+    return (
+        <div className="flex gap-2 flex-1 w-full h-full py-1 pr-1 overflow-auto">
+            <TerminalItem></TerminalItem>
+        </div> 
+    )
+}
 
-const TerminalCom: React.FC = () => {
+const TerminalItem: React.FC = () => {
     const { id } = useParams();
-    const {setCurTerminal,terminals} = useTerminalStore();
-    const terminalData = useMemo(() => terminals[id!], [terminals]);
-    if(!terminalData) return;
+    const { setCurTerminal, terminals } = useTerminalStore();
+    const terminalData = useMemo(() => terminals[id!], [id, terminals]);
+    if (!terminalData) return;
 
     const bgColor = '#212121';
     const terminalRef = useRef<HTMLDivElement | null>(null);
 
     const createTerm = () => {
         const fitAddon = new FitAddon();
-        let term = new Terminal({
+        let term = new Xterm({
             fontSize: 14,
             theme: {
                 background: bgColor
