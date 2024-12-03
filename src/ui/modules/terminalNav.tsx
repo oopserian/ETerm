@@ -53,7 +53,7 @@ export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, data,
                     <StatusBadge status={data.status} />
                     <ServerIcon />
                 </div>
-                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{data.host?.alias}</p>
+                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{data.name}</p>
                 <Button as="div" onClick={(e) => closeTerm(e)} variant="ghost" className="opacity-0 size-6 p-1.5 justify-center group-hover:opacity-100 hover:bg-zinc-100">
                     <XMarkIcon />
                 </Button>

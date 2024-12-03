@@ -1,16 +1,24 @@
 import { create } from "zustand";
 
+export type Position = 'top' | 'left' | 'right' | 'bottom';
 export interface TerminalData {
     id: string,
-    host: HostData,
-    status: TerminalStatus
+    name: string,
+    host: HostData[],
+    status: TerminalStatus,
+}
+
+interface SplitView{
+    position: Position
+    rate: number
+    terminal: TerminalData
 }
 
 interface TerminalStore {
     terminals: Record<string, TerminalData>
     curTerminal: TerminalData | null
     setCurTerminal: (id: string) => void
-    addTerminals: (terminals: Record<string, TerminalData>) => void
+    // addTerminals: (terminals: Record<string, TerminalData>) => void
     addTerminal: (terminal: TerminalData) => void
     updateTerminal: (id:string, terminal: Partial<TerminalData>) => void
     deleteTerminal: (id:string) => void
@@ -22,9 +30,9 @@ const useTerminalStore = create<TerminalStore>((set) => ({
     setCurTerminal: (id:string) => set((state)=>({
         curTerminal: state.terminals[id]
     })),
-    addTerminals: (terminals) => set(() => ({
-        terminals
-    })),
+    // addTerminals: (terminals) => set(() => ({
+    //     terminals
+    // })),
     addTerminal: (terminal) => set((state) => ({
         terminals: {
             ...state.terminals,
