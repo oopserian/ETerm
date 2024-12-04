@@ -1,7 +1,7 @@
 import LoadingRing from "@/assets/loading-ring.svg";
 import { Button } from "@/components/button/button";
 import { cn } from "@/lib/utils";
-import useTerminalStore, { TerminalData } from "@/stores/useTerminalStore";
+import useTerminalStore, { TerminalData, TerminalView } from "@/stores/useTerminalStore";
 import { useDraggable } from "@dnd-kit/core";
 import { CheckIcon, ServerIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ReactNode, useMemo } from "react";
@@ -9,18 +9,18 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 interface NavItemForTerminalProp extends React.LinkHTMLAttributes<HTMLLinkElement> {
     id: string,
-    data: TerminalData
+    data: TerminalView
 }
 
 export const TerminalNavs: React.FC = () => {
-    const { terminals } = useTerminalStore();
-    const terminalList = useMemo(() => Object.values(terminals), [terminals]);
+    const { views } = useTerminalStore();
+    const viewList = useMemo(() => Object.values(views), [views]);
 
     return (
         <>
             {
-                terminalList.map(term => (
-                    <NavItemForTerminal key={term.id} id={term.id} data={term}></NavItemForTerminal>
+                viewList.map(view => (
+                    <NavItemForTerminal key={view.terminal.id} id={view.terminal.id} data={view}></NavItemForTerminal>
                 ))
             }
         </>
@@ -30,7 +30,7 @@ export const TerminalNavs: React.FC = () => {
 
 export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, data, ...prop }) => {
     const navigate = useNavigate();
-    const { curTerminal, deleteTerminal } = useTerminalStore();
+    const { curView, deleteTerminal } = useTerminalStore();
     const { attributes, listeners, setNodeRef } = useDraggable({
         id,
     });
@@ -38,22 +38,22 @@ export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, data,
     const closeTerm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         e.stopPropagation();
-        deleteTerminal(data.id);
-        if (curTerminal?.id == data.id) {
+        deleteTerminal(data.terminal.id);
+        if (curView?.terminal.id == data.terminal.id) {
             navigate("/");
         };
     }
 
     return (
-        <NavLink ref={setNodeRef} {...listeners} {...attributes} to={'/terminal/' + data.id} className={({ isActive }) => cn(
+        <NavLink ref={setNodeRef} {...listeners} {...attributes} to={'/terminal/' + data.terminal.id} className={({ isActive }) => cn(
             isActive ? "[&_button]:bg-white" : ""
         )}>
             <Button variant="ghost" className={cn('w-full p-1 text-xs group', prop.className)}>
                 <div className={cn('relative size-6 flex items-center justify-center rounded-md text-white bg-slate-600')}>
-                    <StatusBadge status={data.status} />
+                    <StatusBadge status={data.terminal.status} />
                     <ServerIcon />
                 </div>
-                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{data.name}</p>
+                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{data.terminal.name}</p>
                 <Button as="div" onClick={(e) => closeTerm(e)} variant="ghost" className="opacity-0 size-6 p-1.5 justify-center group-hover:opacity-100 hover:bg-zinc-100">
                     <XMarkIcon />
                 </Button>

@@ -5,7 +5,7 @@ import { NavItemForTerminal } from "./terminalNav";
 
 export const DndContextTerminal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [dragId, setDragId] = useState<number | string | null>(null);
-    const { terminals, updateTerminal } = useTerminalStore();
+    const { views, splitView } = useTerminalStore();
     const mouseSensor = useSensor(MouseSensor, {
         activationConstraint: {
             distance: 15
@@ -22,10 +22,8 @@ export const DndContextTerminal: React.FC<{ children: React.ReactNode }> = ({ ch
         let dragData = event.active;
         let dropData = event.over?.data.current;
         if (dragData.id == dropData?.id) return;
-        console.log(terminals)
-        console.log(dragData)
-        console.log(dropData)
-        // updateTerminal(event.over?.id,)
+        let position = dropData?.position;
+        splitView(dragData.id as string, dropData?.id, position);
         setDragId(null)
     };
 
@@ -39,10 +37,10 @@ export const DndContextTerminal: React.FC<{ children: React.ReactNode }> = ({ ch
 
 
 const TerminalDragOverlay: React.FC<{ activeId: string | number | null }> = ({ activeId }) => {
-    const { terminals } = useTerminalStore();
+    const { views } = useTerminalStore();
     return (
         <DragOverlay>
-            {activeId ? (<NavItemForTerminal className="bg-zinc-100 pointer-events-none shadow-sm" id={'1'} data={terminals[activeId]}></NavItemForTerminal>) : null}
+            {activeId ? (<NavItemForTerminal className="bg-zinc-100 pointer-events-none shadow-sm" id={'1'} data={views[activeId]}></NavItemForTerminal>) : null}
         </DragOverlay>
     )
 };

@@ -30,16 +30,20 @@ export const Home = React.memo(() => {
 
 
 const HostItem: React.FC<{ host: HostData }> = ({ host }) => {
-    let { addTerminal } = useTerminalStore();
+    let { addView } = useTerminalStore();
 
     const connectHost = async () => {
         try {
             let id = await window.host.connect(host);
-            addTerminal({
-                id,
-                name: host.alias,
-                host: [host],
-                status: 'connecting'
+            addView({
+                area: [0, 0, 10, 10],
+                childs: {},
+                terminal: {
+                    id,
+                    name: host.alias,
+                    host: [host],
+                    status: 'connecting'
+                }
             });
         } catch (err: any) {
             toast.error(err.message)

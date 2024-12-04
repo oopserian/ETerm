@@ -8,50 +8,74 @@ export interface TerminalData {
     status: TerminalStatus,
 }
 
-interface SplitView{
-    position: Position
-    rate: number
-    terminal: TerminalData
+export interface TerminalView {
+    terminal: TerminalData,
+    area: [number, number, number, number],
+    childs: Record<string, TerminalView>
 }
 
 interface TerminalStore {
+    views: Record<string, TerminalView>
     terminals: Record<string, TerminalData>
-    curTerminal: TerminalData | null
-    setCurTerminal: (id: string) => void
-    // addTerminals: (terminals: Record<string, TerminalData>) => void
-    addTerminal: (terminal: TerminalData) => void
-    updateTerminal: (id:string, terminal: Partial<TerminalData>) => void
-    deleteTerminal: (id:string) => void
+    curView: TerminalView | null
+    setCurView: (id: string) => void
+    addView: (view: TerminalView) => void
+    splitView: (dragId: string, dropId: string, position: Position) => void
+    updateTerminal: (id: string, terminal: Partial<TerminalData>) => void
+    deleteTerminal: (id: string) => void
 }
 
 const useTerminalStore = create<TerminalStore>((set) => ({
+    views: {},
     terminals: {},
-    curTerminal: null,
-    setCurTerminal: (id:string) => set((state)=>({
-        curTerminal: state.terminals[id]
+    curView: null,
+    setCurView: (id: string) => set((state) => ({
+        curView: state.views[id]
     })),
-    // addTerminals: (terminals) => set(() => ({
-    //     terminals
-    // })),
-    addTerminal: (terminal) => set((state) => ({
-        terminals: {
-            ...state.terminals,
-            [terminal.id]: terminal
-        }
-    })),
-    updateTerminal: (id, terminal) => set((state)=>{
-         // 通过展开操作符创建一个新的终端对象
-        const terminals = { ...state.terminals };
+    addView: (view) => set((state) => {
+        let views = { ...state.views };
+        views = {
+            ...views,
+            [view.terminal.id]: view
+        };
+        return { views }
+    }),
+    splitView: (dragId, dropId, position) => set((state) => {
+        let views = { ...state.views };
+        let dragView = views[dragId];
+        let dropView = views[dropId];
+        // 假设 dragView.area = [x, y, w, h]
+        let [rs, cs, re, ce] = dragView.area;
 
-        if (terminals[id]) {
-            terminals[id] = {
-                ...terminals[id], // 保留现有的字段
-                ...terminal, // 更新传入的部分数据
-            };
+        console.log(position);
+
+        if (position === 'top') {
+            dragView.area = [rs, cs, re / 2, ce]; 
+            dropView.area = [rs + re / 2, cs, re, ce];  
+        } else if (position === 'bottom') {
+            dragView.area = [rs + re / 2, cs, re , ce]; 
+            dropView.area = [rs, cs, re / 2, ce];  
+        } else if (position === 'left') {
+            dragView.area = [rs, cs, re, ce / 2];  
+            dropView.area = [rs, cs + ce / 2, re, ce];
+        } else if (position === 'right') {
+            dragView.area = [rs, cs + ce / 2, re, ce]; 
+            dropView.area = [rs, cs, re, ce / 2]; 
         }
 
+        console.log(views)
         return {
-            terminals, // 返回更新后的新的 terminals 对象
+            views
+        };
+    }),
+    updateTerminal: (id, terminal) => set((state) => {
+        let views = { ...state.views };
+        views[id].terminal = {
+            ...views[id].terminal,
+            ...terminal
+        };
+        return {
+            views
         };
     }),
     deleteTerminal: (id) => set((state) => {
