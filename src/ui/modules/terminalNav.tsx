@@ -14,13 +14,13 @@ interface NavItemForTerminalProp extends React.LinkHTMLAttributes<HTMLLinkElemen
 
 export const TerminalNavs: React.FC = () => {
     const { views } = useTerminalStore();
-    const viewList = useMemo(() => Object.values(views), [views]);
+    const viewKeysList = useMemo(() => Object.keys(views), [views]);
 
     return (
         <>
             {
-                viewList.map(view => (
-                    <NavItemForTerminal key={view.terminal.id} id={view.terminal.id} data={view}></NavItemForTerminal>
+                viewKeysList.map(key => (
+                    <NavItemForTerminal key={key} id={key} data={views[key]}></NavItemForTerminal>
                 ))
             }
         </>
@@ -30,7 +30,7 @@ export const TerminalNavs: React.FC = () => {
 
 export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, data, ...prop }) => {
     const navigate = useNavigate();
-    const { curView, deleteTerminal } = useTerminalStore();
+    const { curView, terminals, deleteTerminal } = useTerminalStore();
     const { attributes, listeners, setNodeRef } = useDraggable({
         id,
     });
@@ -38,22 +38,22 @@ export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, data,
     const closeTerm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         e.stopPropagation();
-        deleteTerminal(data.terminal.id);
-        if (curView?.terminal.id == data.terminal.id) {
+        deleteTerminal(id);
+        if (curView?.id == id) {
             navigate("/");
         };
     }
 
     return (
-        <NavLink ref={setNodeRef} {...listeners} {...attributes} to={'/terminal/' + data.terminal.id} className={({ isActive }) => cn(
+        <NavLink ref={setNodeRef} {...listeners} {...attributes} to={'/terminal/' + id} className={({ isActive }) => cn(
             isActive ? "[&_button]:bg-white" : ""
         )}>
             <Button variant="ghost" className={cn('w-full p-1 text-xs group', prop.className)}>
                 <div className={cn('relative size-6 flex items-center justify-center rounded-md text-white bg-slate-600')}>
-                    <StatusBadge status={data.terminal.status} />
+                    <StatusBadge status={terminals[id]?.status} />
                     <ServerIcon />
                 </div>
-                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{data.terminal.name}</p>
+                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{data.name}</p>
                 <Button as="div" onClick={(e) => closeTerm(e)} variant="ghost" className="opacity-0 size-6 p-1.5 justify-center group-hover:opacity-100 hover:bg-zinc-100">
                     <XMarkIcon />
                 </Button>

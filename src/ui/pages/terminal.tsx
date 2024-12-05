@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { Terminal as Xterm } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { useParams } from 'react-router-dom';
-import useTerminalStore, { Position, TerminalData, TerminalView } from '@/stores/useTerminalStore';
+import useTerminalStore, { Position, TerminalData } from '@/stores/useTerminalStore';
 import { ServerIcon } from '@heroicons/react/24/outline';
 import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
@@ -11,9 +11,9 @@ import { cn } from '@/lib/utils';
 export function Terminal() {
     return (
         <>
-            <div className="flex gap-2 flex-1 w-full h-full py-1 pr-1 overflow-auto">
+            <div className="flex gap-2 flex-1 w-full h-full py-1 pr-1">
                 {/* 10 x 10 */}
-                <div className="w-full h-full grid grid-cols-10 grid-rows-10">
+                <div className="w-full h-full grid grid-cols-10 grid-rows-10 gap-1">
                     <SplitWrap></SplitWrap>
                 </div>
             </div>
@@ -23,21 +23,34 @@ export function Terminal() {
 
 const SplitWrap: React.FC = () => {
     const { id } = useParams();
-    const { views } = useTerminalStore();
+    const { views, terminals } = useTerminalStore();
     const view = useMemo(() => views[id!], [id, views]);
 
     if (!view) return;
-
-    let style = {
-        gridArea: view.area.map(num => num + 1).join('/')
+    // 获取样式
+    const getStyle = (id: string) => {
+        const area = view.views[id]?.area;
+        return {
+            gridArea: area.map(num => num + 1).join('/')
+        }
     };
 
     return (
-        <div style={style} className="relative flex gap-2 flex-1 w-full h-full overflow-auto">
-            <TerminalItem terminal={view.terminal}></TerminalItem>
-        </div>
-    )
-}
+        <>
+            {
+                Object.keys(view.views).map((key) => (
+                    <div
+                        key={key}
+                        style={getStyle(key)}
+                        className="relative flex gap-2 flex-1 w-full h-full overflow-hidden"
+                    >
+                        <TerminalItem terminal={terminals[key]} />
+                    </div>
+                ))
+            }
+        </>
+    );
+};
 
 
 const TerminalItem: React.FC<{ terminal: TerminalData }> = ({ terminal }) => {
@@ -72,7 +85,9 @@ const TerminalItem: React.FC<{ terminal: TerminalData }> = ({ terminal }) => {
         });
 
         window.terminal.subscribeOutput((data) => {
-            term.write(data.data)
+            if(data.id == id){
+                term.write(data.data)
+            }
         });
 
         return term;
@@ -87,30 +102,31 @@ const TerminalItem: React.FC<{ terminal: TerminalData }> = ({ terminal }) => {
 
     return (
         <div className="relative w-full h-full">
-            <div className="flex flex-col gap-2 w-full h-full rounded-lg overflow-hidden p-2" style={{ background: bgColor }}>
+            <div className="flex flex-col gap-2 w-full h-full rounded-lg p-2" style={{ background: bgColor }}>
                 <div className="flex items-center gap-2 text-white text-sm opacity-70">
                     <ServerIcon className="size-4" />
                     <p>{terminal.name}</p>
                 </div>
-                <div className="flex-1 bg-inherit [&_terminal]:h-full" ref={terminalRef}></div>
+                <div className="flex-1 bg-inherit overflow-hidden" ref={terminalRef}></div>
             </div>
-            <DropWrap position="bottom"></DropWrap>
-            <DropWrap position="top"></DropWrap>
-            <DropWrap position="left"></DropWrap>
-            <DropWrap position="right"></DropWrap>
+            <DropWrap position="bottom" dropId={id}></DropWrap>
+            <DropWrap position="top" dropId={id}></DropWrap>
+            <DropWrap position="left" dropId={id}></DropWrap>
+            <DropWrap position="right" dropId={id}></DropWrap>
         </div>
     )
 }
 
 
-const DropWrap: React.FC<{ position: Position }> = ({ position }) => {
+const DropWrap: React.FC<{ position: Position, dropId: string }> = ({ position, dropId }) => {
     const { id } = useParams();
     const { isOver, setNodeRef } = useDroppable({
         data: {
-            id,
+            viewId: id,
+            dropId: dropId,
             position
         },
-        id: 'TerminalDroppable-' + position
+        id: `TerminalDroppable-${dropId}-${position}`
     });
     const trigger: Record<Position, string> = {
         top: 'top-0 left-0 w-full h-1/3',

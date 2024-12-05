@@ -9,9 +9,11 @@ export interface TerminalData {
 }
 
 export interface TerminalView {
-    terminal: TerminalData,
-    area: [number, number, number, number],
-    childs: Record<string, TerminalView>
+    id: string,
+    name: string,
+    views: Record<string, {
+        area: [number, number, number, number]
+    }>
 }
 
 interface TerminalStore {
@@ -19,8 +21,8 @@ interface TerminalStore {
     terminals: Record<string, TerminalData>
     curView: TerminalView | null
     setCurView: (id: string) => void
-    addView: (view: TerminalView) => void
-    splitView: (dragId: string, dropId: string, position: Position) => void
+    addView: (terminal: TerminalData) => void
+    splitView: (viewId: string, dragId: string, dropId: string, position: Position) => void
     updateTerminal: (id: string, terminal: Partial<TerminalData>) => void
     deleteTerminal: (id: string) => void
 }
@@ -32,50 +34,65 @@ const useTerminalStore = create<TerminalStore>((set) => ({
     setCurView: (id: string) => set((state) => ({
         curView: state.views[id]
     })),
-    addView: (view) => set((state) => {
+    addView: (terminal) => set((state) => {
         let views = { ...state.views };
+        let terminals = { ...state.terminals };
+        terminals[terminal.id] = terminal;
         views = {
             ...views,
-            [view.terminal.id]: view
+            [terminal.id]: {
+                id: terminal.id,
+                name: terminal.name,
+                views: {
+                    [terminal.id]: {
+                        area: [0, 0, 10, 10]
+                    }
+                }
+            }
         };
-        return { views }
+        return { views, terminals }
     }),
-    splitView: (dragId, dropId, position) => set((state) => {
+    splitView: (viewId, dragId, dropId, position) => set((state) => {
         let views = { ...state.views };
-        let dragView = views[dragId];
-        let dropView = views[dropId];
-        // 假设 dragView.area = [x, y, w, h]
-        let [rs, cs, re, ce] = dragView.area;
+        let view = views[viewId];
+        view.views[dragId] = { area: [0, 0, 0, 0] };
+        delete views[dragId];
+        view.name = 'split view';
+        let dragView = view.views[dragId];
+        let dropView = view.views[dropId];
+        let [dp_y1, dp_x1, dp_y2, dp_x2] = dropView.area;
 
-        console.log(position);
+        // 计算中点
+        const midY = Math.floor(dp_y1 + (dp_y2 - dp_y1) / 2);
+        const midX = Math.floor(dp_x1 + (dp_x2 - dp_x1) / 2);
 
+        // 处理分割
         if (position === 'top') {
-            dragView.area = [rs, cs, re / 2, ce]; 
-            dropView.area = [rs + re / 2, cs, re, ce];  
+            dragView.area = [dp_y1, dp_x1, midY, dp_x2];
+            dropView.area = [midY, dp_x1, dp_y2, dp_x2];
         } else if (position === 'bottom') {
-            dragView.area = [rs + re / 2, cs, re , ce]; 
-            dropView.area = [rs, cs, re / 2, ce];  
+            dragView.area = [midY, dp_x1, dp_y2, dp_x2];
+            dropView.area = [dp_y1, dp_x1, midY, dp_x2];
         } else if (position === 'left') {
-            dragView.area = [rs, cs, re, ce / 2];  
-            dropView.area = [rs, cs + ce / 2, re, ce];
+            dragView.area = [dp_y1, dp_x1, dp_y2, midX];
+            dropView.area = [dp_y1, midX, dp_y2, dp_x2];
         } else if (position === 'right') {
-            dragView.area = [rs, cs + ce / 2, re, ce]; 
-            dropView.area = [rs, cs, re, ce / 2]; 
+            dragView.area = [dp_y1, midX, dp_y2, dp_x2];
+            dropView.area = [dp_y1, dp_x1, dp_y2, midX];
         }
 
-        console.log(views)
         return {
             views
         };
     }),
     updateTerminal: (id, terminal) => set((state) => {
-        let views = { ...state.views };
-        views[id].terminal = {
-            ...views[id].terminal,
+        let terminals = { ...state.terminals };
+        terminals[id] = {
+            ...terminals[id],
             ...terminal
         };
         return {
-            views
+            terminals
         };
     }),
     deleteTerminal: (id) => set((state) => {

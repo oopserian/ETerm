@@ -36,14 +36,10 @@ const HostItem: React.FC<{ host: HostData }> = ({ host }) => {
         try {
             let id = await window.host.connect(host);
             addView({
-                area: [0, 0, 10, 10],
-                childs: {},
-                terminal: {
-                    id,
-                    name: host.alias,
-                    host: [host],
-                    status: 'connecting'
-                }
+                id,
+                name: host.alias,
+                host: [host],
+                status: 'connecting'
             });
         } catch (err: any) {
             toast.error(err.message)

@@ -5,7 +5,7 @@ import { NavItemForTerminal } from "./terminalNav";
 
 export const DndContextTerminal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [dragId, setDragId] = useState<number | string | null>(null);
-    const { views, splitView } = useTerminalStore();
+    const { splitView } = useTerminalStore();
     const mouseSensor = useSensor(MouseSensor, {
         activationConstraint: {
             distance: 15
@@ -21,9 +21,9 @@ export const DndContextTerminal: React.FC<{ children: React.ReactNode }> = ({ ch
     const handleDragEnd = (event: DragEndEvent) => {
         let dragData = event.active;
         let dropData = event.over?.data.current;
-        if (dragData.id == dropData?.id) return;
+        if (dragData.id == dropData?.viewId) return;
         let position = dropData?.position;
-        splitView(dragData.id as string, dropData?.id, position);
+        splitView(dropData?.viewId, dragData.id as string, dropData?.dropId, position);
         setDragId(null)
     };
 
