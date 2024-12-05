@@ -30,12 +30,12 @@ export const Home = React.memo(() => {
 
 
 const HostItem: React.FC<{ host: HostData }> = ({ host }) => {
-    let { addView } = useTerminalStore();
+    let { addTab } = useTerminalStore();
 
     const connectHost = async () => {
         try {
             let id = await window.host.connect(host);
-            addView({
+            addTab({
                 id,
                 name: host.alias,
                 host: [host],

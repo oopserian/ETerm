@@ -9,47 +9,58 @@ import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 
 export function Terminal() {
+    const { id } = useParams();
+    const { activeTab } = useTerminalStore();
+
+    if (!id) return;
+
+    useEffect(() => {
+        if (id) {
+            activeTab(id)
+        }
+    }, [id]);
     return (
         <>
             <div className="flex gap-2 flex-1 w-full h-full py-1 pr-1">
-                {/* 10 x 10 */}
-                <div className="w-full h-full grid grid-cols-10 grid-rows-10 gap-1">
-                    <SplitWrap></SplitWrap>
+                <div className="w-full h-full">
+                    <SplitViews terminalId={id}></SplitViews>
                 </div>
             </div>
         </>
     )
 }
 
-const SplitWrap: React.FC = () => {
+const SplitViews: React.FC<{ terminalId: string }> = ({ terminalId }) => {
     const { id } = useParams();
-    const { views, terminals } = useTerminalStore();
-    const view = useMemo(() => views[id!], [id, views]);
-
-    if (!view) return;
-    // 获取样式
-    const getStyle = (id: string) => {
-        const area = view.views[id]?.area;
-        return {
-            gridArea: area.map(num => num + 1).join('/')
-        }
-    };
-
-    return (
-        <>
-            {
-                Object.keys(view.views).map((key) => (
-                    <div
-                        key={key}
-                        style={getStyle(key)}
-                        className="relative flex gap-2 flex-1 w-full h-full overflow-hidden"
-                    >
-                        <TerminalItem terminal={terminals[key]} />
-                    </div>
-                ))
-            }
-        </>
-    );
+    const { terminals, tabs } = useTerminalStore();
+    const views = tabs[id!].views;
+    if (views) {
+        return (
+            <div className='w-full h-full'>
+                {
+                    views && Object.values(views).filter(view => view.type).map(view => (
+                        view.views && (
+                            <div className={cn("flex gap-1 w-full h-full", {
+                                'flex-col': view.type == 'y',
+                                'flex-row': view.type == 'x',
+                            })}>
+                                {view.views[0]}
+                                {view.views[1]}
+                                {/* <SplitViews id={view.views[0]}></SplitViews> */}
+                                {/* <SplitViews id={view.views[1]}></SplitViews> */}
+                            </div>
+                        )
+                    ))
+                }
+            </div>
+        );
+    } else {
+        return (
+            <>
+                <TerminalItem terminal={terminals[id]}></TerminalItem>
+            </>
+        )
+    }
 };
 
 
@@ -85,7 +96,7 @@ const TerminalItem: React.FC<{ terminal: TerminalData }> = ({ terminal }) => {
         });
 
         window.terminal.subscribeOutput((data) => {
-            if(data.id == id){
+            if (data.id == id) {
                 term.write(data.data)
             }
         });
@@ -122,7 +133,7 @@ const DropWrap: React.FC<{ position: Position, dropId: string }> = ({ position, 
     const { id } = useParams();
     const { isOver, setNodeRef } = useDroppable({
         data: {
-            viewId: id,
+            tabId: id,
             dropId: dropId,
             position
         },

@@ -21,9 +21,9 @@ export const DndContextTerminal: React.FC<{ children: React.ReactNode }> = ({ ch
     const handleDragEnd = (event: DragEndEvent) => {
         let dragData = event.active;
         let dropData = event.over?.data.current;
-        if (dragData.id == dropData?.viewId) return;
+        if (dragData.id == dropData?.tabId) return;
         let position = dropData?.position;
-        splitView(dropData?.viewId, dragData.id as string, dropData?.dropId, position);
+        splitView(dropData?.tabId, dragData.id as string, dropData?.dropId, position);
         setDragId(null)
     };
 
@@ -37,10 +37,10 @@ export const DndContextTerminal: React.FC<{ children: React.ReactNode }> = ({ ch
 
 
 const TerminalDragOverlay: React.FC<{ activeId: string | number | null }> = ({ activeId }) => {
-    const { views } = useTerminalStore();
+    const { tabs } = useTerminalStore();
     return (
         <DragOverlay>
-            {activeId ? (<NavItemForTerminal className="bg-zinc-100 pointer-events-none shadow-sm" id={'1'} data={views[activeId]}></NavItemForTerminal>) : null}
+            {activeId ? (<NavItemForTerminal className="bg-zinc-100 pointer-events-none shadow-sm" id={'1'} data={tabs[activeId]}></NavItemForTerminal>) : null}
         </DragOverlay>
     )
 };

@@ -1,7 +1,7 @@
 import LoadingRing from "@/assets/loading-ring.svg";
 import { Button } from "@/components/button/button";
 import { cn } from "@/lib/utils";
-import useTerminalStore, { TerminalData, TerminalView } from "@/stores/useTerminalStore";
+import useTerminalStore, { TerminalTab } from "@/stores/useTerminalStore";
 import { useDraggable } from "@dnd-kit/core";
 import { CheckIcon, ServerIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ReactNode, useMemo } from "react";
@@ -9,18 +9,18 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 interface NavItemForTerminalProp extends React.LinkHTMLAttributes<HTMLLinkElement> {
     id: string,
-    data: TerminalView
+    data: TerminalTab
 }
 
 export const TerminalNavs: React.FC = () => {
-    const { views } = useTerminalStore();
-    const viewKeysList = useMemo(() => Object.keys(views), [views]);
+    const { tabs } = useTerminalStore();
+    const tabKeysList = useMemo(() => Object.keys(tabs), [tabs]);
 
     return (
         <>
             {
-                viewKeysList.map(key => (
-                    <NavItemForTerminal key={key} id={key} data={views[key]}></NavItemForTerminal>
+                tabKeysList.map(key => (
+                    <NavItemForTerminal key={key} id={key} data={tabs[key]}></NavItemForTerminal>
                 ))
             }
         </>
@@ -30,7 +30,7 @@ export const TerminalNavs: React.FC = () => {
 
 export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, data, ...prop }) => {
     const navigate = useNavigate();
-    const { curView, terminals, deleteTerminal } = useTerminalStore();
+    const { curTabId, terminals, tabs } = useTerminalStore();
     const { attributes, listeners, setNodeRef } = useDraggable({
         id,
     });
@@ -38,8 +38,8 @@ export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, data,
     const closeTerm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         e.stopPropagation();
-        deleteTerminal(id);
-        if (curView?.id == id) {
+        // deleteTerminal(id);
+        if (curTabId == id) {
             navigate("/");
         };
     }
