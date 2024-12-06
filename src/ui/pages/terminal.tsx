@@ -1,9 +1,9 @@
 import '@xterm/xterm/css/xterm.css';
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Terminal as Xterm } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { useParams } from 'react-router-dom';
-import useTerminalStore, { Position, TerminalData } from '@/stores/useTerminalStore';
+import useTerminalStore, { Position, TerminalData, View } from '@/stores/useTerminalStore';
 import { ServerIcon } from '@heroicons/react/24/outline';
 import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
@@ -11,60 +11,74 @@ import { cn } from '@/lib/utils';
 export function Terminal() {
     const { id } = useParams();
     const { activeTab } = useTerminalStore();
+    const { terminals, tabs } = useTerminalStore();
 
     if (!id) return;
 
     useEffect(() => {
-        if (id) {
-            activeTab(id)
-        }
+        if (id) activeTab(id);
     }, [id]);
+
+    let ViewComponent: React.FC;
+    let views = tabs[id]?.views;
+
+    if (views) {
+        let splitViews = Object.values(views).filter(view => view.type);
+        ViewComponent = () => <SplitViews views={views} view={splitViews[0]} />;
+    } else {
+        ViewComponent = () => <TerminalItem terminal={terminals[id]} />;
+    };
+
     return (
         <>
             <div className="flex gap-2 flex-1 w-full h-full py-1 pr-1">
                 <div className="w-full h-full">
-                    <SplitViews terminalId={id}></SplitViews>
+                    <ViewComponent></ViewComponent>
                 </div>
             </div>
         </>
     )
 }
 
-const SplitViews: React.FC<{ terminalId: string }> = ({ terminalId }) => {
-    const { id } = useParams();
-    const { terminals, tabs } = useTerminalStore();
-    const views = tabs[id!].views;
-    if (views) {
+interface SplitViewsProps extends React.HtmlHTMLAttributes<HTMLElement> {
+    views: Record<string, View>
+    view: View
+}
+
+const SplitViews: React.FC<SplitViewsProps> = ({ views, view, ...props }) => {
+    const { terminals } = useTerminalStore();
+
+    if (!view.views) {
         return (
-            <div className='w-full h-full'>
-                {
-                    views && Object.values(views).filter(view => view.type).map(view => (
-                        view.views && (
-                            <div className={cn("flex gap-1 w-full h-full", {
-                                'flex-col': view.type == 'y',
-                                'flex-row': view.type == 'x',
-                            })}>
-                                {view.views[0]}
-                                {view.views[1]}
-                                {/* <SplitViews id={view.views[0]}></SplitViews> */}
-                                {/* <SplitViews id={view.views[1]}></SplitViews> */}
-                            </div>
-                        )
-                    ))
-                }
-            </div>
+            <TerminalItem style={props.style} terminal={terminals[view.id]} />
         );
-    } else {
-        return (
-            <>
-                <TerminalItem terminal={terminals[id]}></TerminalItem>
-            </>
-        )
-    }
+    };
+
+    let style = view.type == 'x' ? {
+        width: (100 * view.rate!) + '%'
+    } : {
+        height: (100 * view.rate!) + '%'
+    };
+
+    const renderView = (cviews: string[]) => (
+        <div style={props.style} className={cn("flex gap-1 h-full w-full", {
+            'flex-col': view.type === 'y',
+            'flex-row': view.type === 'x',
+        }, props.className)}>
+            {cviews?.map((id: string) => (
+                <SplitViews key={id} style={style} views={views} view={views[id]} />
+            ))}
+        </div>
+    );
+
+    return renderView(view.views)
 };
 
+interface TerminalItemProps extends React.HtmlHTMLAttributes<HTMLElement> {
+    terminal: TerminalData
+}
 
-const TerminalItem: React.FC<{ terminal: TerminalData }> = ({ terminal }) => {
+const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
     let { id } = terminal;
     const bgColor = '#212121';
     const terminalRef = useRef<HTMLDivElement | null>(null);
@@ -112,13 +126,13 @@ const TerminalItem: React.FC<{ terminal: TerminalData }> = ({ terminal }) => {
     }, [id]);
 
     return (
-        <div className="relative w-full h-full">
+        <div style={props.style} className="relative w-full h-full overflow-hidden">
             <div className="flex flex-col gap-2 w-full h-full rounded-lg p-2" style={{ background: bgColor }}>
                 <div className="flex items-center gap-2 text-white text-sm opacity-70">
                     <ServerIcon className="size-4" />
                     <p>{terminal.name}</p>
                 </div>
-                <div className="flex-1 bg-inherit overflow-hidden" ref={terminalRef}></div>
+                <div className="flex-1 bg-inherit h-full w-full overflow-hidden" ref={terminalRef}></div>
             </div>
             <DropWrap position="bottom" dropId={id}></DropWrap>
             <DropWrap position="top" dropId={id}></DropWrap>

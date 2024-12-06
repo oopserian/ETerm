@@ -64,36 +64,68 @@ const useTerminalStore = create<TerminalStore>((set) => ({
     splitView: (tabId, dragId, dropId, position) => set((state) => {
         let tabs = { ...state.tabs };
         delete tabs[dragId];
-        let views = tabs[tabId].views || {};
+        let views = tabs[tabId].views || null;
+
+        let id = new Date().getTime();
+        let splitId = 'split-' + id;
+        let newTabId = 'group-' + id;
 
         let splitType: View['type'] = (position == 'left' || position == 'right') ? 'x' : 'y';
 
-        views = {
-            ...views,
-            ['split-1']: {
-                id: 'split-1',
+        if (views) {
+            let pView = views[dropId].pView!;
+
+            views[splitId] = {
+                id: splitId,
+                pView,
                 type: splitType,
                 rate: 0.5,
                 views: [dragId, dropId]
-            },
-            [dragId]: {
+            };
+
+            let newView = views[pView].views?.map(i => (i == dropId ? splitId : i)) as any;
+
+            views[pView] = {
+                ...views[pView],
+                views: newView
+            };
+
+            views[dragId] = {
                 id: dragId,
-                pView: 'split-1'
-            },
-            [dropId]: {
+                pView: splitId
+            };
+
+            views[dropId] = {
                 id: dropId,
-                pView: 'split-1'
-            }
-        };
+                pView: splitId
+            };
+        } else {
+            views = {
+                [splitId]: {
+                    id: splitId,
+                    type: splitType,
+                    rate: 0.5,
+                    views: [dragId, dropId]
+                },
+                [dragId]: {
+                    id: dragId,
+                    pView: splitId
+                },
+                [dropId]: {
+                    id: dropId,
+                    pView: splitId
+                }
+            };
 
-        tabs[tabId] = {
-            id: tabId,
-            name: '多窗口',
-            views
-        };
+            delete tabs[tabId];
 
-        console.log(tabs);
-
+            tabs[newTabId] = {
+                id: newTabId,
+                name: '多窗口',
+                views
+            };
+        }
+        console.log(views);
         return { tabs }
     })
 }));
