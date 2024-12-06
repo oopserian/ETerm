@@ -125,7 +125,7 @@ const useTerminalStore = create<TerminalStore>((set) => ({
                 views
             };
         }
-        console.log(views);
+        
         return { tabs }
     })
 }));

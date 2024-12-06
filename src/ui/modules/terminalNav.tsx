@@ -3,13 +3,13 @@ import { Button } from "@/components/button/button";
 import { cn } from "@/lib/utils";
 import useTerminalStore, { TerminalTab } from "@/stores/useTerminalStore";
 import { useDraggable } from "@dnd-kit/core";
-import { CheckIcon, ServerIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, ServerIcon, XMarkIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 import { ReactNode, useMemo } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 interface NavItemForTerminalProp extends React.LinkHTMLAttributes<HTMLLinkElement> {
     id: string,
-    data: TerminalTab
+    tab: TerminalTab
 }
 
 export const TerminalNavs: React.FC = () => {
@@ -20,7 +20,7 @@ export const TerminalNavs: React.FC = () => {
         <>
             {
                 tabKeysList.map(key => (
-                    <NavItemForTerminal key={key} id={key} data={tabs[key]}></NavItemForTerminal>
+                    <NavItemForTerminal key={key} id={key} tab={tabs[key]}></NavItemForTerminal>
                 ))
             }
         </>
@@ -28,9 +28,9 @@ export const TerminalNavs: React.FC = () => {
 }
 
 
-export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, data, ...prop }) => {
+export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, tab, ...prop }) => {
     const navigate = useNavigate();
-    const { curTabId, terminals, tabs } = useTerminalStore();
+    const { curTabId, terminals } = useTerminalStore();
     const { attributes, listeners, setNodeRef } = useDraggable({
         id,
     });
@@ -50,10 +50,10 @@ export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, data,
         )}>
             <Button variant="ghost" className={cn('w-full p-1 text-xs group', prop.className)}>
                 <div className={cn('relative size-6 flex items-center justify-center rounded-md text-white bg-slate-600')}>
-                    <StatusBadge status={terminals[id]?.status} />
-                    <ServerIcon />
+                    {terminals[id]?.status && <StatusBadge status={terminals[id]?.status} />}
+                    {tab?.views ? <RectangleGroupIcon /> : <ServerIcon />}
                 </div>
-                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{data.name}</p>
+                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{tab?.name}</p>
                 <Button as="div" onClick={(e) => closeTerm(e)} variant="ghost" className="opacity-0 size-6 p-1.5 justify-center group-hover:opacity-100 hover:bg-zinc-100">
                     <XMarkIcon />
                 </Button>
@@ -81,5 +81,5 @@ const StatusBadge: React.FC<{ status: TerminalStatus }> = ({ status }) => {
         )}>
             {statusIcon[status]}
         </div>
-    )
+    );
 }

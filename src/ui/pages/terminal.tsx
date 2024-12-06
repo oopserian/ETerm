@@ -61,7 +61,7 @@ const SplitViews: React.FC<SplitViewsProps> = ({ views, view, ...props }) => {
     };
 
     const renderView = (cviews: string[]) => (
-        <div style={props.style} className={cn("flex gap-1 h-full w-full", {
+        <div style={props.style} className={cn("flex gap-1 h-full w-full overflow-hidden", {
             'flex-col': view.type === 'y',
             'flex-row': view.type === 'x',
         }, props.className)}>
