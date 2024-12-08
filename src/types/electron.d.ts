@@ -50,7 +50,7 @@ type EventPayloadMapping = {
         result: void
     },
     terminalDelete:{
-        params: [id:string],
+        params: [ids:string[]],
         result: void
     }
     getTerminalSessionLog:{

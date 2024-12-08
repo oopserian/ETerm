@@ -16,7 +16,7 @@ const routes = [
         element: <Home />,
     },
     {
-        path: "/terminal/:id",
+        path: "/terminal",
         icon: <ServerStackIcon />,
         title: "终端",
         element: <Terminal />,

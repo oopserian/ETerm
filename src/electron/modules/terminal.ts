@@ -17,7 +17,7 @@ export default class Terminal {
     }
     registerHandlers() {
         ipcMainHandle('terminalInput', (_, data) => this.input(data.id, data.command));
-        ipcMainHandle('terminalDelete', (_, id) => this.delete(id));
+        ipcMainHandle('terminalDelete', (_, ids) => this.close(ids));
         ipcMainHandle('getTerminalSessionLog',(_, id)=> this.getSessionLog(id));
     }
     create(id: string, client: Client, stream?: ClientChannel) {
@@ -47,9 +47,11 @@ export default class Terminal {
         let {status} = this.terms[id];
         ipcMainWebSend(this.mainWindow,'terminalUpdate',{id,status})
     }
-    delete(id:string){
-        this.terms[id].stream?.destroy();
-        this.terms[id].client.destroy();
-        delete this.terms[id];
+    close(ids:string[]){
+        ids.forEach(id=>{
+            this.terms[id].stream?.destroy();
+            this.terms[id].client.destroy();
+            delete this.terms[id];
+        })
     }
 }

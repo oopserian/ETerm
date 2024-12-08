@@ -2,31 +2,25 @@ import '@xterm/xterm/css/xterm.css';
 import React, { useEffect, useRef } from "react";
 import { Terminal as Xterm } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import { useParams } from 'react-router-dom';
 import useTerminalStore, { Position, TerminalData, View } from '@/stores/useTerminalStore';
 import { ServerIcon } from '@heroicons/react/24/outline';
 import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 
 export function Terminal() {
-    const { id } = useParams();
-    const { activeTab } = useTerminalStore();
+    const { curTabId } = useTerminalStore();
     const { terminals, tabs } = useTerminalStore();
-
-    if (!id) return;
-
-    useEffect(() => {
-        if (id) activeTab(id);
-    }, [id]);
+    
+    if (!curTabId) return;
 
     let ViewComponent: React.FC;
-    let views = tabs[id]?.views;
+    let views = tabs[curTabId]?.views;
 
     if (views) {
         let splitViews = Object.values(views).filter(view => view.type);
         ViewComponent = () => <SplitViews views={views} view={splitViews[0]} />;
     } else {
-        ViewComponent = () => <TerminalItem terminal={terminals[id]} />;
+        ViewComponent = () => <TerminalItem terminal={terminals[curTabId]} />;
     };
 
     return (
@@ -80,6 +74,7 @@ interface TerminalItemProps extends React.HtmlHTMLAttributes<HTMLElement> {
 
 const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
     let { id } = terminal;
+
     const bgColor = '#212121';
     const terminalRef = useRef<HTMLDivElement | null>(null);
 
@@ -144,10 +139,10 @@ const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
 
 
 const DropWrap: React.FC<{ position: Position, dropId: string }> = ({ position, dropId }) => {
-    const { id } = useParams();
+    const { curTabId } = useTerminalStore();
     const { isOver, setNodeRef } = useDroppable({
         data: {
-            tabId: id,
+            tabId: curTabId,
             dropId: dropId,
             position
         },

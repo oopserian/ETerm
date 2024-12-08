@@ -30,23 +30,28 @@ export const TerminalNavs: React.FC = () => {
 
 export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, tab, ...prop }) => {
     const navigate = useNavigate();
-    const { curTabId, terminals } = useTerminalStore();
+    const { curTabId, terminals, deleteView, activeTab } = useTerminalStore();
     const { attributes, listeners, setNodeRef } = useDraggable({
         id,
     });
 
-    const closeTerm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const deleteTab = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         e.stopPropagation();
-        // deleteTerminal(id);
+        deleteView(id);
         if (curTabId == id) {
+            activeTab('');
             navigate("/");
         };
-    }
+    };
+
+    const selectTab = () => {
+        activeTab(id);
+    };
 
     return (
-        <NavLink ref={setNodeRef} {...listeners} {...attributes} to={'/terminal/' + id} className={({ isActive }) => cn(
-            isActive ? "[&_button]:bg-white" : ""
+        <NavLink onClick={selectTab} ref={setNodeRef} {...listeners} {...attributes} to={'/terminal'} className={({ isActive }) => cn(
+            (isActive && curTabId == id) ? "[&_button]:bg-white" : ""
         )}>
             <Button variant="ghost" className={cn('w-full p-1 text-xs group', prop.className)}>
                 <div className={cn('relative size-6 flex items-center justify-center rounded-md text-white bg-slate-600')}>
@@ -54,7 +59,7 @@ export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, tab, 
                     {tab?.views ? <RectangleGroupIcon /> : <ServerIcon />}
                 </div>
                 <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{tab?.name}</p>
-                <Button as="div" onClick={(e) => closeTerm(e)} variant="ghost" className="opacity-0 size-6 p-1.5 justify-center group-hover:opacity-100 hover:bg-zinc-100">
+                <Button as="div" onClick={(e) => deleteTab(e)} variant="ghost" className="opacity-0 size-6 p-1.5 justify-center group-hover:opacity-100 hover:bg-zinc-100">
                     <XMarkIcon />
                 </Button>
             </Button>

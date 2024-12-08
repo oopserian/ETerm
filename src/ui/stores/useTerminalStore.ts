@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { closeTerminals } from "@/hooks/useTerminal";
+import { createSplitView } from "@/helpers/splitViewHelpers";
 
 export type Position = 'top' | 'left' | 'right' | 'bottom';
 export interface TerminalData {
@@ -29,10 +31,11 @@ interface TerminalStore {
     addTab: (terminal: TerminalData) => void,
     activeTab: (tabId: string) => void,
     updateTerminal: (id: string, terminal: Partial<TerminalData>) => void,
-    splitView: (tabId: string, dragId: string, dropId: string, position: Position) => void
+    splitView: (tabId: string, dragId: string, dropId: string, position: Position) => void,
+    deleteView: (tabId: string) => void
 }
 
-const useTerminalStore = create<TerminalStore>((set) => ({
+const useTerminalStore = create<TerminalStore>((set, get) => ({
     tabs: {},
     terminals: {},
     curTabId: '',
@@ -61,72 +64,44 @@ const useTerminalStore = create<TerminalStore>((set) => ({
             }
         }
     })),
-    splitView: (tabId, dragId, dropId, position) => set((state) => {
+    deleteView: (tabId) => set((state) => {
         let tabs = { ...state.tabs };
-        delete tabs[dragId];
-        let views = tabs[tabId].views || null;
-
-        let id = new Date().getTime();
-        let splitId = 'split-' + id;
-        let newTabId = 'group-' + id;
-
-        let splitType: View['type'] = (position == 'left' || position == 'right') ? 'x' : 'y';
-
+        let views = tabs[tabId].views;
+        let terminalIds: string[] = [];
         if (views) {
-            let pView = views[dropId].pView!;
-
-            views[splitId] = {
-                id: splitId,
-                pView,
-                type: splitType,
-                rate: 0.5,
-                views: [dragId, dropId]
-            };
-
-            let newView = views[pView].views?.map(i => (i == dropId ? splitId : i)) as any;
-
-            views[pView] = {
-                ...views[pView],
-                views: newView
-            };
-
-            views[dragId] = {
-                id: dragId,
-                pView: splitId
-            };
-
-            views[dropId] = {
-                id: dropId,
-                pView: splitId
-            };
+            terminalIds = Object.values(views).filter(view => !view.type).map(view => view.id);
         } else {
-            views = {
-                [splitId]: {
-                    id: splitId,
-                    type: splitType,
-                    rate: 0.5,
-                    views: [dragId, dropId]
-                },
-                [dragId]: {
-                    id: dragId,
-                    pView: splitId
-                },
-                [dropId]: {
-                    id: dropId,
-                    pView: splitId
-                }
-            };
+            terminalIds = [tabs[tabId].id];
+        };
+        closeTerminals(terminalIds);
+        delete tabs[tabId];
+        return ({
+            tabs
+        })
+    }),
+    splitView: (tabId, dragId, dropId, position) => set((state) => {
+        const tabs = { ...state.tabs };
+        const currentTab = tabs[tabId];
+        const id = Date.now().toString();
 
-            delete tabs[tabId];
-
+        if (currentTab.views) {
+            const views = { ...currentTab.views };
+            const parentViewId = views[dropId].pView!;
+            let newViews = createSplitView({ id, views, parentViewId, dragId, dropId, position });
+            tabs[tabId].views = newViews;
+        } else {
+            const newTabId = `group-tab-${id}`;
+            let newViews = createSplitView({ id, dragId, dropId, position });
             tabs[newTabId] = {
                 id: newTabId,
                 name: '多窗口',
-                views
+                views: newViews,
             };
-        }
-        
-        return { tabs }
+            delete tabs[tabId];
+            get().activeTab(newTabId);
+        };
+        delete tabs[dragId];
+        return { tabs };
     })
 }));
 

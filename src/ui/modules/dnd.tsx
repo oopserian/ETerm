@@ -40,7 +40,7 @@ const TerminalDragOverlay: React.FC<{ activeId: string | number | null }> = ({ a
     const { tabs } = useTerminalStore();
     return (
         <DragOverlay>
-            {activeId ? (<NavItemForTerminal className="bg-zinc-100 pointer-events-none shadow-sm" id={'1'} data={tabs[activeId]}></NavItemForTerminal>) : null}
+            {activeId ? (<NavItemForTerminal className="bg-zinc-100 pointer-events-none shadow-sm" id={'1'} tab={tabs[activeId]}></NavItemForTerminal>) : null}
         </DragOverlay>
     )
 };

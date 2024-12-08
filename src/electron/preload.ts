@@ -31,7 +31,7 @@ export const terminal = {
     subscribeUpdate: (callback: (payload: EventPayloadMapping['terminalUpdate']['params'][0]) => void) => ipcOn('terminalUpdate', callback),
     input: (data: EventPayloadMapping['terminalInput']['params'][0]) => ipcInvoke('terminalInput', data),
     getSessionLogs: (id:string) => ipcInvoke('getTerminalSessionLog',id),
-    delete: (id:string) => ipcInvoke('terminalDelete',id)
+    delete: (ids:string[]) => ipcInvoke('terminalDelete',ids)
 };
 
 contextBridge.exposeInMainWorld('host', host);
