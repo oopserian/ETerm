@@ -55,16 +55,10 @@ function ViewRoutes() {
 
 
 const Nav = () => {
-    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     return (
         <>
-            <CreateSSHDialog open={isOpen} onclose={() => setIsOpen(false)}></CreateSSHDialog>
             <div className="py-2 px-3 flex flex-col gap-1 text-zinc-500 w-full max-w-48">
-                <Button variant="outline" onClick={() => setIsOpen(true)} className="bg-white px-3 py-2 text-xs">
-                    <PlusIcon></PlusIcon>
-                    <p>添加服务器</p>
-                </Button>
                 {
                     routes.map((route, index) => (
                         !route.hide && <NavLink key={index} to={route.path} className={({ isActive }) => isActive ? "[&_button]:bg-white" : ""}>

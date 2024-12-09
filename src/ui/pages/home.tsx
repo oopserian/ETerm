@@ -1,10 +1,14 @@
-import { ServerIcon } from "@heroicons/react/24/outline"
-import React, { useEffect, useMemo } from "react"
+import { PlusIcon, ServerIcon } from "@heroicons/react/24/outline"
+import React, { useEffect, useMemo, useState } from "react"
 import useHostStore from "@/stores/useHostStore"
 import useTerminalStore from "@/stores/useTerminalStore";
 import { toast } from "sonner";
+import { CardItem } from "@/components/card/card";
+import { Button } from "@/components/button/button";
+import { CreateSSHDialog } from "@/modules/ssh";
 
-export const Home = React.memo(() => {
+export const Home = () => {
+    const [isOpen, setIsOpen] = useState<boolean>(false);
     const { hosts, getHosts } = useHostStore();
     const hostList = useMemo(() => Object.values(hosts), [hosts]);
 
@@ -13,20 +17,29 @@ export const Home = React.memo(() => {
     }, []);
 
     return (
-        <div className="py-3 pr-3 flex flex-col gap-2">
-            <p className="font-medium text-lg">服务器</p>
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
-                {
-                    hostList.length ? (
-                        hostList.map((item) => (
-                            <HostItem key={item.id} host={item}></HostItem>
-                        ))
-                    ) : ''
-                }
+        <>
+            <CreateSSHDialog open={isOpen} onclose={() => setIsOpen(false)}></CreateSSHDialog>
+            <div className="py-3 pr-3 flex flex-col gap-2">
+                <div className="flex justify-between">
+                    <p className="font-medium text-lg">服务器</p>
+                    <Button variant="default" size="sm" onClick={() => setIsOpen(true)}>
+                        <PlusIcon></PlusIcon>
+                        <p>添加服务器</p>
+                    </Button>
+                </div>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
+                    {
+                        hostList.length ? (
+                            hostList.map((item) => (
+                                <HostItem key={item.id} host={item}></HostItem>
+                            ))
+                        ) : ''
+                    }
+                </div>
             </div>
-        </div>
+        </>
     )
-});
+};
 
 
 const HostItem: React.FC<{ host: HostData }> = ({ host }) => {
@@ -47,17 +60,12 @@ const HostItem: React.FC<{ host: HostData }> = ({ host }) => {
     }
 
     return (
-        <div onClick={connectHost} className="cursor-pointer flex items-center gap-2 w-full p-3 rounded-xl shadow-sm border border-zinc-200 bg-white hover:bg-zinc-50">
-            <div className="size-8 p-1.5 bg-slate-600 rounded-lg text-white">
-                <ServerIcon></ServerIcon>
+        <CardItem onClick={connectHost} icon={<ServerIcon />}>
+            <p className="text-xs">{host.alias}</p>
+            <div className="flex text-xs text-zinc-500">
+                <p>ssh</p>,
+                <p>{host.username}</p>
             </div>
-            <div className="flex flex-col">
-                <p className="text-xs">{host.alias}</p>
-                <div className="flex text-xs text-zinc-500">
-                    <p>ssh</p>,
-                    <p>{host.username}</p>
-                </div>
-            </div>
-        </div>
+        </CardItem>
     )
 }

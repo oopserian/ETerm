@@ -4,6 +4,7 @@ import { isDev, getPreloadPath } from "./lib/utils";
 import Host from "./modules/host";
 import Common from "./modules/common";
 import Terminal from "./modules/terminal";
+import Command from "./modules/command";
 
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({
@@ -23,6 +24,8 @@ app.on('ready', () => {
 
     const terminal = new Terminal(mainWindow);
     terminal.registerHandlers();
+    
     new Common(mainWindow).registerHandlers();
     new Host(mainWindow, terminal).registerHandlers();
+    new Command(mainWindow).registerHandlers();
 });

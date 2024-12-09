@@ -8,13 +8,13 @@ interface HostData {
     alias: string
 }
 
-type TerminalStatus = 'connecting' 
-| 'connected' 
-| 'disconnect' 
-| 'authFailed' 
-| 'closed' 
-| 'error' 
-| ''
+type TerminalStatus = 'connecting'
+    | 'connected'
+    | 'disconnect'
+    | 'authFailed'
+    | 'closed'
+    | 'error'
+    | ''
 
 type EventPayloadMapping = {
     saveHost: {
@@ -25,13 +25,13 @@ type EventPayloadMapping = {
         params: [data: HostData],
         result: Promise<string>
     },
-    deleteHost:{
-        params: [id:string],
+    deleteHost: {
+        params: [id: string],
         result: void
     },
     getHost: {
         params: [],
-        result: Record<string,HostData>
+        result: Record<string, HostData>
     },
     decryptPassword: {
         params: [password: string, iv: string],
@@ -45,16 +45,24 @@ type EventPayloadMapping = {
         params: [{ id: string, data: any }],
         result: void
     },
-    terminalUpdate:{
-        params: [{id:string, status:TerminalStatus}],
+    terminalUpdate: {
+        params: [{ id: string, status: TerminalStatus }],
         result: void
     },
     terminalDelete:{
         params: [ids:string[]],
         result: void
     }
-    getTerminalSessionLog:{
+    getTerminalSessionLog: {
         params: [id: string],
         result: string
+    },
+    createCommand: {
+        params: [data: Partial<CommandSnippetData>],
+        result: void
+    },
+    getCommand:{
+        params: [],
+        result: Record<number, CommandSnippetData>
     }
 }
