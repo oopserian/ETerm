@@ -22,3 +22,10 @@ export const FormInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = 
         <input {...props} className={cn('w-full border shadow-sm rounded-md px-3 py-1 focus-visible:outline-none', props.className)} />
     )
 }
+
+
+export const FormTextarea: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement>> = ({ ...props }) => {
+    return (
+        <textarea {...props} className={cn('w-full border shadow-sm rounded-md px-3 py-1 focus-visible:outline-none', props.className)} />
+    )
+}
