@@ -1,38 +1,39 @@
 import '@xterm/xterm/css/xterm.css';
-import React, { useEffect, useRef } from "react";
-import { Terminal as Xterm } from "@xterm/xterm";
-import { FitAddon } from "@xterm/addon-fit";
+import React, { useEffect, useState } from "react";
 import useTerminalStore, { Position, TerminalData, View } from '@/stores/useTerminalStore';
 import { ServerIcon } from '@heroicons/react/24/outline';
 import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
+import { TerminalPane } from '@/components/terminal/terminal';
 
 export function Terminal() {
-    const { curTabId } = useTerminalStore();
-    const { terminals, tabs } = useTerminalStore();
-    
-    if (!curTabId) return;
+    const { terminals, tabs, curTabId } = useTerminalStore();
+    const [ViewComponent, setViewComponent] = useState<React.FC | null>(null);
 
-    let ViewComponent: React.FC;
-    let views = tabs[curTabId]?.views;
+    useEffect(() => {
+        if (!curTabId) return;
+        let views = tabs[curTabId]?.views;
+        let NewComponent: React.FC | null = null;
+        if (views) {
+            const splitViews = Object.values(views).filter((view) => view.type);
+            NewComponent = () => <SplitViews views={views} view={splitViews[0]} />;
+        } else {
+            NewComponent = () => <TerminalItem terminal={terminals[curTabId]} />;
+        };
 
-    if (views) {
-        let splitViews = Object.values(views).filter(view => view.type);
-        ViewComponent = () => <SplitViews views={views} view={splitViews[0]} />;
-    } else {
-        ViewComponent = () => <TerminalItem terminal={terminals[curTabId]} />;
-    };
+        setViewComponent(() => NewComponent);
+    }, [curTabId, tabs, terminals]);
+
+    if (!curTabId || !ViewComponent) return null;
 
     return (
-        <>
-            <div className="flex gap-2 flex-1 w-full h-full py-1 pr-1">
-                <div className="w-full h-full">
-                    <ViewComponent></ViewComponent>
-                </div>
+        <div className="flex gap-2 flex-1 w-full h-full py-1 pr-1">
+            <div className="w-full h-full">
+                <ViewComponent />
             </div>
-        </>
-    )
-}
+        </div>
+    );
+};
 
 interface SplitViewsProps extends React.HtmlHTMLAttributes<HTMLElement> {
     views: Record<string, View>
@@ -60,7 +61,7 @@ const SplitViews: React.FC<SplitViewsProps> = ({ views, view, ...props }) => {
             'flex-row': view.type === 'x',
         }, props.className)}>
             {cviews?.map((id: string) => (
-                <SplitViews key={id} style={style} views={views} view={views[id]} />
+                views[id] && <SplitViews key={id} style={style} views={views} view={views[id]} />
             ))}
         </div>
     );
@@ -73,69 +74,34 @@ interface TerminalItemProps extends React.HtmlHTMLAttributes<HTMLElement> {
 }
 
 const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
-    let { id } = terminal;
-
+    const { curFocusTerm, setCurFocusTerm } = useTerminalStore();
+    let { id, name } = terminal;
     const bgColor = '#212121';
-    const terminalRef = useRef<HTMLDivElement | null>(null);
-
-    const createTerm = () => {
-        const fitAddon = new FitAddon();
-        let term = new Xterm({
-            fontSize: 14,
-            theme: {
-                background: bgColor
-            }
-        });
-
-        term.loadAddon(fitAddon);
-        term.open(terminalRef.current!);
-
-        // TODO setTimeout临时处理xterm的dimensions报错
-        setTimeout(() => fitAddon.fit(), 0);
-
-        term.onData((command) => {
-            window.terminal.input({
-                id,
-                command
-            });
-        });
-
-        window.terminal.getSessionLogs(id!).then(logs => {
-            term.write(logs);
-        });
-
-        window.terminal.subscribeOutput((data) => {
-            if (data.id == id) {
-                term.write(data.data)
-            }
-        });
-
-        return term;
-    }
-
-    useEffect(() => {
-        let term = createTerm();
-        return () => {
-            term.dispose();
-        }
-    }, [id]);
+    
+    const style = {
+        ...props.style,
+        borderColor: bgColor,
+        borderStyle: curFocusTerm == id ? 'solid' : 'dashed'
+    };
 
     return (
-        <div style={props.style} className="relative w-full h-full overflow-hidden">
-            <div className="flex flex-col gap-2 w-full h-full rounded-lg p-2" style={{ background: bgColor }}>
-                <div className="flex items-center gap-2 text-white text-sm opacity-70">
-                    <ServerIcon className="size-4" />
-                    <p>{terminal.name}</p>
+        <div onClick={() => setCurFocusTerm(id)} style={style} className="p-0.5 border rounded-lg w-full h-full">
+            <div className="relative w-full h-full overflow-hidden">
+                <div className="flex flex-col gap-2 w-full h-full rounded-md p-2" style={{ background: bgColor }}>
+                    <div className="flex items-center gap-2 text-white text-sm opacity-70">
+                        <ServerIcon className="size-4" />
+                        <p>{name}</p>
+                    </div>
+                    <TerminalPane id={id} bgColor={bgColor}></TerminalPane>
                 </div>
-                <div className="flex-1 bg-inherit h-full w-full overflow-hidden" ref={terminalRef}></div>
+                <DropWrap position="bottom" dropId={id}></DropWrap>
+                <DropWrap position="top" dropId={id}></DropWrap>
+                <DropWrap position="left" dropId={id}></DropWrap>
+                <DropWrap position="right" dropId={id}></DropWrap>
             </div>
-            <DropWrap position="bottom" dropId={id}></DropWrap>
-            <DropWrap position="top" dropId={id}></DropWrap>
-            <DropWrap position="left" dropId={id}></DropWrap>
-            <DropWrap position="right" dropId={id}></DropWrap>
         </div>
     )
-}
+};
 
 
 const DropWrap: React.FC<{ position: Position, dropId: string }> = ({ position, dropId }) => {
@@ -146,7 +112,7 @@ const DropWrap: React.FC<{ position: Position, dropId: string }> = ({ position, 
             dropId: dropId,
             position
         },
-        id: `TerminalDroppable-${dropId}-${position}`
+        id: `Droppable-${dropId}-${position}`
     });
     const trigger: Record<Position, string> = {
         top: 'top-0 left-0 w-full h-1/3',

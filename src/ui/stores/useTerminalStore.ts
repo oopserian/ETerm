@@ -6,8 +6,9 @@ export type Position = 'top' | 'left' | 'right' | 'bottom';
 export interface TerminalData {
     id: string,
     name: string,
-    host: HostData[],
+    host: HostData,
     status: TerminalStatus,
+    term?: any
 }
 
 export interface TerminalTab {
@@ -27,18 +28,21 @@ export interface View {
 interface TerminalStore {
     tabs: Record<string, TerminalTab>,
     curTabId: string,
+    curFocusTerm: string,
     terminals: Record<string, TerminalData>,
     addTab: (terminal: TerminalData) => void,
     activeTab: (tabId: string) => void,
     updateTerminal: (id: string, terminal: Partial<TerminalData>) => void,
     splitView: (tabId: string, dragId: string, dropId: string, position: Position) => void,
-    deleteView: (tabId: string) => void
+    deleteView: (tabId: string) => void,
+    setCurFocusTerm: (id: string) => void
 }
 
 const useTerminalStore = create<TerminalStore>((set, get) => ({
     tabs: {},
     terminals: {},
     curTabId: '',
+    curFocusTerm: '',
     activeTab: (tabId) => set({ curTabId: tabId }),
     addTab: (terminal) => set((state) => (
         {
@@ -59,7 +63,7 @@ const useTerminalStore = create<TerminalStore>((set, get) => ({
         terminals: {
             ...state.terminals,
             [id]: {
-                ...state.terminals[id],
+                ...(state.terminals[id] || {}),
                 ...terminal
             }
         }
@@ -102,7 +106,8 @@ const useTerminalStore = create<TerminalStore>((set, get) => ({
         };
         delete tabs[dragId];
         return { tabs };
-    })
+    }),
+    setCurFocusTerm: (id) => set({ curFocusTerm: id })
 }));
 
 

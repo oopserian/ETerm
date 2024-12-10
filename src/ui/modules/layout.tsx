@@ -1,6 +1,4 @@
-import { CodeBracketIcon, PlusIcon, ServerStackIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
-import { CreateSSHDialog } from "./ssh";
+import { CodeBracketIcon, ServerStackIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/button/button";
 import { NavLink, Route, Routes } from "react-router-dom";
 import { TerminalNavs } from "./terminalNav";

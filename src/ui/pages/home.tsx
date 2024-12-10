@@ -51,7 +51,7 @@ const HostItem: React.FC<{ host: HostData }> = ({ host }) => {
             addTab({
                 id,
                 name: host.alias,
-                host: [host],
+                host,
                 status: 'connecting'
             });
         } catch (err: any) {
