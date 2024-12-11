@@ -85,7 +85,7 @@ const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
     };
 
     return (
-        <div onClick={() => setCurFocusTerm(id)} style={style} className="p-0.5 border rounded-lg w-full h-full">
+        <div onClick={()=>setCurFocusTerm(id)} style={style} className="p-0.5 border rounded-lg w-full h-full">
             <div className="relative w-full h-full overflow-hidden">
                 <div className="flex flex-col gap-2 w-full h-full rounded-md p-2" style={{ background: bgColor }}>
                     <div className="flex items-center gap-2 text-white text-sm opacity-70 un-drag-bar">

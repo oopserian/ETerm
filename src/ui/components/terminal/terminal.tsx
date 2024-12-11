@@ -1,10 +1,20 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Terminal as Xterm } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
+import useTerminalStore from "@/stores/useTerminalStore";
+import { debounce } from "@/lib/utils";
 
 export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bgColor }) => {
     const terminalRef = useRef<HTMLDivElement | null>(null);
-    
+    const { curFocusTerm, setCurFocusTerm } = useTerminalStore();
+    const [terminal, setTerminal] = useState<Xterm>();
+
+    const autoFocus = () => {
+        if (curFocusTerm == id) {
+            terminal?.focus();
+        };
+    };
+
     const createTerm = () => {
         const fitAddon = new FitAddon();
         let t = new Xterm({
@@ -13,6 +23,7 @@ export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bg
                 background: bgColor
             }
         });
+
 
         t.loadAddon(fitAddon);
         t.open(terminalRef.current!);
@@ -31,11 +42,24 @@ export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bg
             t.write(logs);
         });
 
-        return t;
+        return {
+            terminal: t,
+            fitAddon
+        };
     };
 
     useEffect(() => {
-        const terminal = createTerm();
+        let { terminal, fitAddon } = createTerm();
+        setTerminal(terminal);
+        autoFocus();
+
+        const resize = debounce(() => fitAddon.fit(), 300);
+        window.addEventListener('resize', resize);
+
+        terminal.element?.addEventListener('focusin', () => {
+            setCurFocusTerm(id);
+        });
+
         const unSub = window.terminal.subscribeOutput((data) => {
             if (data.id == id) {
                 terminal.write(data.data)
@@ -45,8 +69,13 @@ export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bg
         return () => {
             terminal.dispose();
             unSub();
+            window.removeEventListener('resize', resize);
         };
     }, []);
+
+    useEffect(() => {
+        autoFocus();
+    }, [curFocusTerm]);
 
     return (
         <div className="w-full h-full overflow-hidden" ref={terminalRef}></div>
