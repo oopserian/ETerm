@@ -14,6 +14,8 @@ export interface TerminalData {
 export interface TerminalTab {
     id: string,
     name: string,
+    isBroadcastInput: boolean,
+    sidebarVisible: boolean,
     views?: Record<string, View>
 }
 
@@ -31,6 +33,7 @@ interface TerminalStore {
     curFocusTerm: string,
     terminals: Record<string, TerminalData>,
     addTab: (terminal: TerminalData) => void,
+    updateTab: (tabId: string, data: Partial<TerminalTab>) => void,
     activeTab: (tabId: string) => void,
     updateTerminal: (id: string, terminal: Partial<TerminalData>) => void,
     splitView: (tabId: string, dragId: string, dropId: string, position: Position) => void,
@@ -55,10 +58,21 @@ const useTerminalStore = create<TerminalStore>((set, get) => ({
                 [terminal.id]: {
                     id: terminal.id,
                     name: terminal.name,
+                    isBroadcastInput: false,
+                    sidebarVisible: false
                 }
             }
         }
     )),
+    updateTab: (id, data) => set((state) => ({
+        tabs: {
+            ...state.tabs,
+            [id]: {
+                ...state.tabs[id],
+                ...data
+            }
+        }
+    })),
     updateTerminal: (id, terminal) => set((state) => ({
         terminals: {
             ...state.terminals,
@@ -99,6 +113,8 @@ const useTerminalStore = create<TerminalStore>((set, get) => ({
             tabs[newTabId] = {
                 id: newTabId,
                 name: '多窗口',
+                isBroadcastInput: false,
+                sidebarVisible: false,
                 views: newViews,
             };
             delete tabs[tabId];

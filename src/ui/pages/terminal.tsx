@@ -1,12 +1,55 @@
 import '@xterm/xterm/css/xterm.css';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import useTerminalStore, { Position, TerminalData, View } from '@/stores/useTerminalStore';
 import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import { TerminalPane } from '@/components/terminal/terminal';
-import { IconTerminal2 } from '@tabler/icons-react';
+import { IconTerminal2, IconLayoutSidebarRight, IconLayoutSidebarRightFilled, IconSitemap, IconSitemapFilled } from '@tabler/icons-react';
+import { Button } from '@/components/button/button';
+import { TerminalSide } from '@/modules/terminal';
 
 export function Terminal() {
+    const { curTabId, tabs, updateTab } = useTerminalStore();
+    const curTab = useMemo(() => tabs[curTabId], [curTabId,tabs]);
+    const switchBroadcastInput = () => {
+        updateTab(curTabId, {
+            isBroadcastInput: !curTab.isBroadcastInput
+        })
+    };
+
+    const switchSidebarVisible = () => {
+        updateTab(curTabId, {
+            sidebarVisible: !curTab.sidebarVisible
+        })
+    };
+
+    return (
+        <div className="flex flex-col gap-1 flex-1 w-full h-full py-1 pr-1">
+            <div className="flex px-1 gap-1 w-full justify-end items-center">
+                <Button onClick={switchBroadcastInput} variant="ghost" className="p-1.5">
+                    {
+                        curTab.isBroadcastInput ? <IconSitemapFilled /> : <IconSitemap />
+                    }
+                </Button>
+                <Button onClick={switchSidebarVisible} variant="ghost" className="p-1.5">
+                    {
+                        curTab.sidebarVisible ? <IconLayoutSidebarRightFilled /> : <IconLayoutSidebarRight />
+                    }
+                </Button>
+            </div>
+            <div className="flex gap-1 w-full h-full overflow-hidden">
+                <div className={cn("w-full h-full", curTab.sidebarVisible ? "w-[70%]" : "w-full")}>
+                    <TerminalView />
+                </div>
+                <div className={cn("w-[30%]", curTab.sidebarVisible ? "block" : "hidden")}>
+                    <TerminalSide />
+                </div>
+            </div>
+        </div>
+    )
+};
+
+export function TerminalView() {
     const { terminals, tabs, curTabId } = useTerminalStore();
     const [ViewComponent, setViewComponent] = useState<React.FC | null>(null);
 
@@ -27,11 +70,7 @@ export function Terminal() {
     if (!curTabId || !ViewComponent) return null;
 
     return (
-        <div className="flex gap-2 flex-1 w-full h-full py-1 pr-1">
-            <div className="w-full h-full">
-                <ViewComponent />
-            </div>
-        </div>
+        <ViewComponent />
     );
 };
 
@@ -77,7 +116,7 @@ const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
     const { curFocusTerm, setCurFocusTerm } = useTerminalStore();
     let { id, name } = terminal;
     const bgColor = '#212121';
-    
+
     const style = {
         ...props.style,
         borderColor: bgColor,
@@ -85,7 +124,7 @@ const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
     };
 
     return (
-        <div onClick={()=>setCurFocusTerm(id)} style={style} className="p-0.5 border rounded-lg w-full h-full">
+        <div onClick={() => setCurFocusTerm(id)} style={style} className="p-0.5 border rounded-lg w-full h-full">
             <div className="relative w-full h-full overflow-hidden">
                 <div className="flex flex-col gap-2 w-full h-full rounded-md p-2" style={{ background: bgColor }}>
                     <div className="flex items-center gap-2 text-white text-sm opacity-70 un-drag-bar">

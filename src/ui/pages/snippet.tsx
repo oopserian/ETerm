@@ -12,7 +12,6 @@ export const Snippet = () => {
     const commandSnippetList = useMemo(() => Object.values(commandSnippet), [commandSnippet]);
     const getData = async () => {
         let data = await window.commandSnippet.get();
-        console.log(data);
         setCommandSnippet(data);
     };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { cn } from "@/lib/utils"
 
 type Variant = 'default' | 'secondary' | 'danger' | 'outline' | 'link' | 'ghost';
@@ -12,9 +12,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 export const Button: React.FC<ButtonProps> = ({ children, className, variant = 'default', size = 'md', as = 'button', ...props }) => {
     const variantMapping: Record<Variant, string> = {
-        default: 'bg-zinc-900 text-white shadow border hover:bg-zinc-900/90',
-        secondary: 'bg-zinc-100 text-zinc-900 shadow border hover:bg-zinc-100/50',
-        danger: 'bg-red-500 text-white shadow',
+        default: 'bg-zinc-900 text-white border hover:bg-zinc-900/90',
+        secondary: 'bg-white text-zinc-900 border hover:bg-white/50',
+        danger: 'bg-red-500 text-white',
         outline: 'border text-zinc-900 hover:bg-zinc-50',
         link: 'text-blue-500 underline',
         ghost: 'hover:bg-white'
