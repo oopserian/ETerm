@@ -1,7 +1,7 @@
 import useTerminalStore from "@/stores/useTerminalStore";
 import { DndContext as DndKitContext, DragEndEvent, DragOverlay, DragStartEvent, MouseSensor, useSensor, useSensors } from "@dnd-kit/core"
 import { useState } from "react";
-import { NavItemForTerminal } from "./terminalNav";
+import { NavItemForTerminal } from "./terminal/nav";
 
 export const DndContextTerminal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [dragId, setDragId] = useState<number | string | null>(null);

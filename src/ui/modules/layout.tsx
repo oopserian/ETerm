@@ -1,6 +1,6 @@
 import { Button } from "@/components/button/button";
 import { NavLink, Route, Routes } from "react-router-dom";
-import { TerminalNavs } from "./terminalNav";
+import { TerminalNavs } from "./terminal/nav";
 import { Home } from "@/pages/home";
 import { Snippet } from "@/pages/snippet";
 import { Terminal } from "@/pages/terminal";

@@ -1,16 +1,16 @@
 import '@xterm/xterm/css/xterm.css';
-import React, { useEffect, useMemo, useState } from "react";
-import useTerminalStore, { Position, TerminalData, View } from '@/stores/useTerminalStore';
-import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
-import { TerminalPane } from '@/components/terminal/terminal';
-import { IconTerminal2, IconLayoutSidebarRight, IconLayoutSidebarRightFilled, IconSitemap, IconSitemapFilled } from '@tabler/icons-react';
+import { useDroppable } from '@dnd-kit/core';
 import { Button } from '@/components/button/button';
-import { TerminalSide } from '@/modules/terminal';
+import { TerminalSide } from '@/modules/terminal/side';
+import React, { useEffect, useMemo, useState } from "react";
+import { TerminalPane } from '@/components/terminal/terminal';
+import useTerminalStore, { Position, TerminalData, View } from '@/stores/useTerminalStore';
+import { IconTerminal2, IconLayoutSidebarRight, IconLayoutSidebarRightFilled, IconSitemap, IconSitemapFilled } from '@tabler/icons-react';
 
 export function Terminal() {
     const { curTabId, tabs, updateTab } = useTerminalStore();
-    const curTab = useMemo(() => tabs[curTabId], [curTabId,tabs]);
+    const curTab = useMemo(() => tabs[curTabId], [curTabId, tabs]);
     const switchBroadcastInput = () => {
         updateTab(curTabId, {
             isBroadcastInput: !curTab.isBroadcastInput
