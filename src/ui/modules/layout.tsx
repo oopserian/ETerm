@@ -30,12 +30,21 @@ const routes = [
 
 export const Layout = () => {
     return (
-        <div className="w-full h-[100vh] flex overflow-hidden bg-zinc-100">
-            <Nav></Nav>
-            <div className="w-full h-full flex flex-col overflow-hidden">
-                <ViewRoutes></ViewRoutes>
+        <>
+            <DragBar></DragBar>
+            <div className="w-full h-[100vh] flex overflow-hidden bg-zinc-100">
+                <Nav></Nav>
+                <div className="w-full h-full flex flex-col overflow-hidden">
+                    <ViewRoutes></ViewRoutes>
+                </div>
             </div>
-        </div>
+        </>
+    )
+}
+
+export const DragBar = () => {
+    return (
+        <div className="fixed top-0 left-0 w-full h-10 regin drag-bar pointer-events-none"></div>
     )
 }
 
@@ -43,7 +52,7 @@ function ViewRoutes() {
     return (
         <Routes>
             {
-                routes.map((route,index) => (
+                routes.map((route, index) => (
                     <Route key={index} path={route.path} element={route.element}></Route>
                 ))
             }
@@ -53,10 +62,9 @@ function ViewRoutes() {
 
 
 const Nav = () => {
-
     return (
         <>
-            <div className="py-2 px-3 flex flex-col gap-1 text-zinc-500 w-full max-w-48">
+            <div className="py-2 px-3 pt-14 flex flex-col gap-1 text-zinc-500 w-full max-w-48">
                 {
                     routes.map((route, index) => (
                         !route.hide && <NavLink key={index} to={route.path} className={({ isActive }) => isActive ? "[&_button]:bg-white" : ""}>

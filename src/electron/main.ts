@@ -14,6 +14,12 @@ app.on('ready', () => {
         minHeight: 600,
         webPreferences: {
             preload: getPreloadPath()
+        },
+        backgroundColor: "transparent",
+        titleBarStyle: 'hidden',
+        trafficLightPosition: {
+            x: 21,
+            y: 21
         }
     });
     if (isDev()) {
@@ -24,7 +30,7 @@ app.on('ready', () => {
 
     const terminal = new Terminal(mainWindow);
     terminal.registerHandlers();
-    
+
     new Common(mainWindow).registerHandlers();
     new Host(mainWindow, terminal).registerHandlers();
     new Command(mainWindow).registerHandlers();

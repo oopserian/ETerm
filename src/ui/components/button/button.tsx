@@ -30,7 +30,7 @@ export const Button: React.FC<ButtonProps> = ({ children, className, variant = '
 
     return (
         <Component type='button' {...props} className={cn(
-            '[&_svg]:size-4 flex gap-1 items-center cursor-pointer outline-none w-auto rounded-md',
+            '[&_svg]:size-4 flex gap-1 items-center cursor-pointer outline-none w-auto rounded-md un-drag-bar',
             variantMapping[variant],
             sizeMapping[size],
             className)}>
