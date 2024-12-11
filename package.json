@@ -18,7 +18,7 @@
   "dependencies": {
     "@dnd-kit/core": "^6.2.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@heroicons/react": "^2.2.0",
+    "@tabler/icons-react": "^3.24.0",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
     "clsx": "^2.1.1",

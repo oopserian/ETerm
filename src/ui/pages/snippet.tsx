@@ -2,9 +2,9 @@ import { Button } from "@/components/button/button"
 import { CardItem } from "@/components/card/card"
 import Dialog from "@/components/dialog/dialog";
 import { FormInput, FormItem, FormTextarea } from "@/components/form/form";
-import { CodeBracketIcon, PlusIcon } from "@heroicons/react/24/outline"
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { IconCode, IconPlus } from "@tabler/icons-react";
 
 export const Snippet = () => {
     const [open, setOpen] = useState<boolean>(false);
@@ -27,7 +27,7 @@ export const Snippet = () => {
                 <div className="flex justify-between">
                     <p className="font-medium text-lg">命令片段</p>
                     <Button onClick={() => setOpen(true)} variant="default" size="sm" className="justify-center">
-                        <PlusIcon />
+                        <IconPlus />
                         <p>新增片段</p>
                     </Button>
                 </div>
@@ -46,7 +46,7 @@ export const Snippet = () => {
 
 export const SnippetItem: React.FC<{ data: CommandSnippetData }> = ({ data }) => {
     return (
-        <CardItem icon={<CodeBracketIcon />}>
+        <CardItem icon={<IconCode />}>
             <p className="text-xs">{data.name}</p>
             <div className="flex text-xs text-zinc-500">
                 <p>{data.des || data.command}</p>

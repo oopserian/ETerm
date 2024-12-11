@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 import React from "react"
-import { XMarkIcon } from "@heroicons/react/24/solid";
+import { IconX } from "@tabler/icons-react";
 
 interface DialogProps {
     children: React.ReactNode;
@@ -23,7 +23,7 @@ const Dialog: React.FC<DialogProps> = ({ children, title, className, open = fals
                 {'translate-y-0':open})}>
                 <div className="px-4 py-3 flex items-center justify-between border-b border-zinc-200">
                     <p className="select-none text-sm">{title}</p>
-                    <XMarkIcon onClick={onClose} className="w-4 h-4 cursor-pointer"></XMarkIcon>
+                    <IconX onClick={onClose} className="w-4 h-4 cursor-pointer"/>
                 </div>
                 <div className="p-4 pt-3">
                     {children}

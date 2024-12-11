@@ -1,10 +1,10 @@
 import '@xterm/xterm/css/xterm.css';
 import React, { useEffect, useState } from "react";
 import useTerminalStore, { Position, TerminalData, View } from '@/stores/useTerminalStore';
-import { ServerIcon } from '@heroicons/react/24/outline';
 import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import { TerminalPane } from '@/components/terminal/terminal';
+import { IconTerminal2 } from '@tabler/icons-react';
 
 export function Terminal() {
     const { terminals, tabs, curTabId } = useTerminalStore();
@@ -89,7 +89,7 @@ const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
             <div className="relative w-full h-full overflow-hidden">
                 <div className="flex flex-col gap-2 w-full h-full rounded-md p-2" style={{ background: bgColor }}>
                     <div className="flex items-center gap-2 text-white text-sm opacity-70 un-drag-bar">
-                        <ServerIcon className="size-4" />
+                        <IconTerminal2 className="size-4" />
                         <p>{name}</p>
                     </div>
                     <TerminalPane id={id} bgColor={bgColor}></TerminalPane>

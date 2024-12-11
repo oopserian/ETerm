@@ -1,4 +1,4 @@
-import { PlusIcon, ServerIcon } from "@heroicons/react/24/outline"
+import { IconTerminal2, IconPlus } from "@tabler/icons-react";
 import React, { useEffect, useMemo, useState } from "react"
 import useHostStore from "@/stores/useHostStore"
 import useTerminalStore from "@/stores/useTerminalStore";
@@ -23,7 +23,7 @@ export const Home = () => {
                 <div className="flex justify-between">
                     <p className="font-medium text-lg">服务器</p>
                     <Button variant="default" size="sm" onClick={() => setIsOpen(true)}>
-                        <PlusIcon></PlusIcon>
+                        <IconPlus></IconPlus>
                         <p>添加服务器</p>
                     </Button>
                 </div>
@@ -60,7 +60,7 @@ const HostItem: React.FC<{ host: HostData }> = ({ host }) => {
     }
 
     return (
-        <CardItem onClick={connectHost} icon={<ServerIcon />}>
+        <CardItem onClick={connectHost} icon={<IconTerminal2 />}>
             <p className="text-xs">{host.alias}</p>
             <div className="flex text-xs text-zinc-500">
                 <p>ssh</p>,

@@ -12,7 +12,7 @@ export const CardItem: React.FC<CardItemProps> = ({ icon, children, ...props }) 
             "cursor-pointer flex items-center gap-2 w-full p-3 rounded-xl shadow-sm border border-zinc-200 bg-white hover:bg-zinc-50",
             props.className
         )}>
-            <div className="size-8 p-1.5 bg-slate-600 rounded-lg text-white">
+            <div className="size-8 p-1.5 flex items-center justify-center bg-slate-600 rounded-lg text-white">
                 {icon}
             </div>
             <div className="flex flex-col">

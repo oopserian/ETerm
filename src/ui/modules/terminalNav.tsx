@@ -3,9 +3,9 @@ import { Button } from "@/components/button/button";
 import { cn } from "@/lib/utils";
 import useTerminalStore, { TerminalTab } from "@/stores/useTerminalStore";
 import { useDraggable } from "@dnd-kit/core";
-import { CheckIcon, ServerIcon, XMarkIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 import { ReactNode, useMemo } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { IconLayoutBoardSplit, IconTerminal2, IconX, IconCheck } from "@tabler/icons-react";
 
 interface NavItemForTerminalProp extends React.LinkHTMLAttributes<HTMLLinkElement> {
     id: string,
@@ -56,11 +56,11 @@ export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, tab, 
             <Button variant="ghost" className={cn('w-full p-1 text-xs group', prop.className)}>
                 <div className={cn('relative size-6 flex items-center justify-center rounded-md text-white bg-slate-600')}>
                     {terminals[id]?.status && <StatusBadge status={terminals[id]?.status} />}
-                    {tab?.views ? <RectangleGroupIcon /> : <ServerIcon />}
+                    {tab?.views ? <IconLayoutBoardSplit /> : <IconTerminal2 />}
                 </div>
                 <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{tab?.name}</p>
                 <Button as="div" onClick={(e) => deleteTab(e)} variant="ghost" className="opacity-0 size-6 p-1.5 justify-center group-hover:opacity-100 hover:bg-zinc-100">
-                    <XMarkIcon />
+                    <IconX />
                 </Button>
             </Button>
         </NavLink>
@@ -70,7 +70,7 @@ export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, tab, 
 const StatusBadge: React.FC<{ status: TerminalStatus }> = ({ status }) => {
     const statusIcon: Record<Partial<TerminalStatus>, ReactNode> = {
         'closed': null,
-        'connected': <CheckIcon />,
+        'connected': <IconCheck />,
         'authFailed': null,
         'connecting': <img src={LoadingRing} />,
         'disconnect': null,
