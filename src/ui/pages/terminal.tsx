@@ -3,8 +3,8 @@ import { cn } from '@/lib/utils';
 import { useDroppable } from '@dnd-kit/core';
 import { Button } from '@/components/button/button';
 import { TerminalSide } from '@/modules/terminal/side';
+import { TerminalPane } from '@/modules/terminal/pane';
 import React, { useEffect, useMemo, useState } from "react";
-import { TerminalPane } from '@/components/terminal/terminal';
 import useTerminalStore, { Position, TerminalData, View } from '@/stores/useTerminalStore';
 import { IconTerminal2, IconLayoutSidebarRight, IconLayoutSidebarRightFilled, IconSitemap, IconSitemapFilled } from '@tabler/icons-react';
 

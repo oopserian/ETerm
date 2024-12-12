@@ -21,6 +21,7 @@ export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bg
         const fitAddon = new FitAddon();
         let t = new Xterm({
             fontSize: 14,
+            scrollback: 1000,
             theme: {
                 background: bgColor
             }
