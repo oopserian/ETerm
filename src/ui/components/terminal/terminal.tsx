@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Terminal as Xterm } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import useTerminalStore from "@/stores/useTerminalStore";
@@ -6,7 +6,9 @@ import { debounce } from "@/lib/utils";
 
 export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bgColor }) => {
     const terminalRef = useRef<HTMLDivElement | null>(null);
-    const { curFocusTerm, setCurFocusTerm } = useTerminalStore();
+    const { curFocusTerm, curTabId, tabs, setCurFocusTerm } = useTerminalStore();
+    const curTab = useMemo(() => tabs[curTabId], [curTabId, tabs]);
+    const isBroadcast = useMemo(() => curTab.broadcastIds.includes(id), [curTab, curFocusTerm])
     const [terminal, setTerminal] = useState<Xterm>();
 
     const autoFocus = () => {
@@ -33,7 +35,7 @@ export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bg
 
         t.onData((command) => {
             window.terminal.input({
-                id,
+                ids: isBroadcast ? curTab.broadcastIds : [id],
                 command
             });
         });

@@ -14,7 +14,7 @@ export interface TerminalData {
 export interface TerminalTab {
     id: string,
     name: string,
-    isBroadcastInput: boolean,
+    broadcastIds: string[],
     sidebarVisible: boolean,
     views?: Record<string, View>
 }
@@ -58,7 +58,7 @@ const useTerminalStore = create<TerminalStore>((set, get) => ({
                 [terminal.id]: {
                     id: terminal.id,
                     name: terminal.name,
-                    isBroadcastInput: false,
+                    broadcastIds: [],
                     sidebarVisible: false
                 }
             }
@@ -113,8 +113,8 @@ const useTerminalStore = create<TerminalStore>((set, get) => ({
             tabs[newTabId] = {
                 id: newTabId,
                 name: '多窗口',
-                isBroadcastInput: false,
                 sidebarVisible: false,
+                broadcastIds: [],
                 views: newViews,
             };
             delete tabs[tabId];

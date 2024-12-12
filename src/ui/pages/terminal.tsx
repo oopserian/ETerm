@@ -11,10 +11,17 @@ import { IconTerminal2, IconLayoutSidebarRight, IconLayoutSidebarRightFilled, Ic
 export function Terminal() {
     const { curTabId, tabs, updateTab } = useTerminalStore();
     const curTab = useMemo(() => tabs[curTabId], [curTabId, tabs]);
+    const isBroadcast = useMemo(() => curTab?.broadcastIds.length, [curTab]);
+    if (!curTab) return;
     const switchBroadcastInput = () => {
+        if (!curTab.views) return;
+        let broadcastIds = Object.keys(curTab.views).filter(key => key.indexOf('-') <= -1);
+        if (isBroadcast){
+            broadcastIds = [];
+        };
         updateTab(curTabId, {
-            isBroadcastInput: !curTab.isBroadcastInput
-        })
+            broadcastIds
+        });
     };
 
     const switchSidebarVisible = () => {
@@ -28,7 +35,7 @@ export function Terminal() {
             <div className="flex px-1 gap-1 w-full justify-end items-center">
                 <Button onClick={switchBroadcastInput} variant="ghost" className="p-1.5">
                     {
-                        curTab.isBroadcastInput ? <IconSitemapFilled /> : <IconSitemap />
+                        isBroadcast ? <IconSitemapFilled /> : <IconSitemap />
                     }
                 </Button>
                 <Button onClick={switchSidebarVisible} variant="ghost" className="p-1.5">
@@ -113,23 +120,47 @@ interface TerminalItemProps extends React.HtmlHTMLAttributes<HTMLElement> {
 }
 
 const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
-    const { curFocusTerm, setCurFocusTerm } = useTerminalStore();
     let { id, name } = terminal;
+    const { tabs, curTabId, curFocusTerm, setCurFocusTerm, updateTab } = useTerminalStore();
+    const curTab = useMemo(() => tabs[curTabId], [curTabId, tabs]);
+    const isBroadcast = useMemo(() => curTab.broadcastIds.includes(id), [curTab]);
+
     const bgColor = '#212121';
 
     const style = {
         ...props.style,
-        borderColor: bgColor,
-        borderStyle: curFocusTerm == id ? 'solid' : 'dashed'
+        ...(
+            isBroadcast ? {
+                borderColor: bgColor,
+                borderStyle: curFocusTerm == id ? 'solid' : 'dashed'
+            } : {}
+        )
+    };
+
+    const switchBroadcastStatus = () => {
+        let curBroadcastIds = curTab.broadcastIds;
+        let broadcastIds = isBroadcast ? curBroadcastIds.filter(i => i !== id) : [...curBroadcastIds, id];
+        updateTab(curTabId, {
+            broadcastIds
+        });
     };
 
     return (
         <div onClick={() => setCurFocusTerm(id)} style={style} className="p-0.5 border rounded-lg w-full h-full">
             <div className="relative w-full h-full overflow-hidden">
                 <div className="flex flex-col gap-2 w-full h-full rounded-md p-2" style={{ background: bgColor }}>
-                    <div className="flex items-center gap-2 text-white text-sm opacity-70 un-drag-bar">
-                        <IconTerminal2 className="size-4" />
-                        <p>{name}</p>
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2 text-white text-sm opacity-70 un-drag-bar">
+                            <IconTerminal2 className="size-4" />
+                            <p>{name}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Button onClick={switchBroadcastStatus} variant="ghost" className="hover:bg-black p-1.5">
+                                {
+                                    curTab.broadcastIds.includes(id) ? <IconSitemapFilled color="#FFF" /> : <IconSitemap color="#FFF" />
+                                }
+                            </Button>
+                        </div>
                     </div>
                     <TerminalPane id={id} bgColor={bgColor}></TerminalPane>
                 </div>

@@ -38,7 +38,7 @@ type EventPayloadMapping = {
         result: string
     },
     terminalInput: {
-        params: [{ id: string, command: string }],
+        params: [{ ids: string[], command: string }],
         result: void
     },
     terminalOutput: {
