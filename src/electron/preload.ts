@@ -30,8 +30,9 @@ export const terminal = {
     subscribeOutput: (callback: (payload: EventPayloadMapping['terminalOutput']['params'][0]) => void) => ipcOn('terminalOutput', callback),
     subscribeUpdate: (callback: (payload: EventPayloadMapping['terminalUpdate']['params'][0]) => void) => ipcOn('terminalUpdate', callback),
     input: (data: EventPayloadMapping['terminalInput']['params'][0]) => ipcInvoke('terminalInput', data),
-    getSessionLogs: (id:string) => ipcInvoke('getTerminalSessionLog',id),
-    delete: (ids:string[]) => ipcInvoke('terminalDelete',ids)
+    getSessionLogs: (id: string) => ipcInvoke('getTerminalSessionLog', id),
+    delete: (ids: string[]) => ipcInvoke('terminalDelete', ids),
+    setWindowSize: (id: string, data: EventPayloadMapping['setTerminalWindowSize']['params'][1]) => ipcInvoke('setTerminalWindowSize', id, data)
 };
 
 export const commandSnippet = {

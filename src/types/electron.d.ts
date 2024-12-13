@@ -49,8 +49,12 @@ type EventPayloadMapping = {
         params: [{ id: string, status: TerminalStatus }],
         result: void
     },
-    terminalDelete:{
-        params: [ids:string[]],
+    terminalDelete: {
+        params: [ids: string[]],
+        result: void
+    }
+    setTerminalWindowSize: {
+        params: [id: string, data: { rows: number, cols: number, width?: number, height?: number }],
         result: void
     }
     getTerminalSessionLog: {
@@ -61,7 +65,7 @@ type EventPayloadMapping = {
         params: [data: Partial<CommandSnippetData>],
         result: void
     },
-    getCommand:{
+    getCommand: {
         params: [],
         result: Record<number, CommandSnippetData>
     }

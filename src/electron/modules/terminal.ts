@@ -19,6 +19,7 @@ export default class Terminal {
         ipcMainHandle('terminalInput', (_, data) => this.input(data.ids, data.command));
         ipcMainHandle('terminalDelete', (_, ids) => this.close(ids));
         ipcMainHandle('getTerminalSessionLog', (_, id) => this.getSessionLog(id));
+        ipcMainHandle('setTerminalWindowSize', (_, id, data) => this.setWindowSize(id, data));
     }
     create(id: string, client: Client, stream?: ClientChannel) {
         this.terms[id] = {
@@ -53,5 +54,9 @@ export default class Terminal {
             this.terms[id].client.destroy();
             delete this.terms[id];
         })
+    }
+    setWindowSize(id: string, { rows, cols, width = 0, height = 0 }: EventPayloadMapping['setTerminalWindowSize']['params'][1]) {
+        if (!this.terms[id]?.stream) return;
+        this.terms[id].stream?.setWindow(rows, cols, height, width);
     }
 }

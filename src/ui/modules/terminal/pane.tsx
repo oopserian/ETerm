@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Terminal as Xterm } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
+import { WebglAddon } from '@xterm/addon-webgl';
 import useTerminalStore from "@/stores/useTerminalStore";
 import { debounce } from "@/lib/utils";
 
@@ -19,17 +20,23 @@ export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bg
 
     const createTerm = () => {
         const fitAddon = new FitAddon();
+        const webglAddon = new WebglAddon();
         let t = new Xterm({
-            fontSize: 14,
+            fontSize: 12,
+            lineHeight: 1,
             scrollback: 1000,
             theme: {
                 background: bgColor
             }
         });
 
-
         t.loadAddon(fitAddon);
         t.open(terminalRef.current!);
+        t.loadAddon(webglAddon);
+
+        t.onResize(({ cols, rows }) => {
+            window.terminal.setWindowSize(id, { cols, rows });
+        });
 
         // TODO setTimeout临时处理xterm的dimensions报错
         setTimeout(() => fitAddon.fit(), 0);

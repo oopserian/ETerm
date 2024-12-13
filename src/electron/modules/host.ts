@@ -28,18 +28,18 @@ export default class Host {
                     if (err) {
                         let errStr = JSON.stringify(err);
                         this.Terminal.output(termId, `\x1b[31m连接失败:\x1b[39m ${errStr}\r\n\r\n`);
-                        this.Terminal.update(termId,{
+                        this.Terminal.update(termId, {
                             status: 'error'
                         });
                         reject(err)
                     };
 
-                    if(stream){
+                    if (stream) {
                         this.Terminal.update(termId, {
                             stream,
                             status: 'connected'
                         });
-    
+
                         stream.on('data', (res: any) => {
                             this.Terminal.output(termId, res);
                         });
@@ -48,7 +48,7 @@ export default class Host {
             }).on('error', (err) => {
                 let errStr = JSON.stringify(err);
                 this.Terminal.output(termId, `\x1b[31m连接失败:\x1b[39m ${errStr}\r\n\r\n`);
-                this.Terminal.update(termId,{ status: 'error' });
+                this.Terminal.update(termId, { status: 'error' });
                 reject(err)
             }).on('close', () => {
                 // this.Terminal.update(termId,{ status: 'closed' });
@@ -79,7 +79,7 @@ export default class Host {
         let hostData = dataStorage.load('host-data.json') || {};
         return hostData;
     }
-    delete(id:string){
+    delete(id: string) {
         let dataStorage = new DataStorage();
         let hostData = dataStorage.load('host-data.json') || {};
         delete hostData[id];
