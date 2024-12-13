@@ -88,6 +88,6 @@ export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bg
     }, [curFocusTerm]);
 
     return (
-        <div className="w-full h-full overflow-hidden" ref={terminalRef}></div>
+        <div className="w-full h-full overflow-hidden terminal-scroll" ref={terminalRef}></div>
     )
 };
