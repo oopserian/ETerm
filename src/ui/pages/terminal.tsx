@@ -6,7 +6,7 @@ import { TerminalSide } from '@/modules/terminal/side';
 import { TerminalPane } from '@/modules/terminal/pane';
 import React, { useEffect, useMemo, useState } from "react";
 import useTerminalStore, { Position, TerminalData, View } from '@/stores/useTerminalStore';
-import { IconTerminal2, IconLayoutSidebarRight, IconLayoutSidebarRightFilled, IconSitemap, IconSitemapFilled } from '@tabler/icons-react';
+import { IconTerminal2, IconLayoutSidebarRight, IconLayoutSidebarRightFilled, IconSitemap, IconSitemapFilled, IconCloudCode } from '@tabler/icons-react';
 
 export function Terminal() {
     const { curTabId, tabs, updateTab } = useTerminalStore();
@@ -59,7 +59,7 @@ export function Terminal() {
 export function TerminalView() {
     const { terminals, tabs, curTabId } = useTerminalStore();
     const [ViewComponent, setViewComponent] = useState<React.FC | null>(null);
-    const views = useMemo(() => tabs[curTabId]?.views, [tabs]);
+    const views = useMemo(() => tabs[curTabId]?.views, [tabs, curTabId, terminals]);
     useEffect(() => {
         if (!curTabId) return;
         let NewComponent: React.FC | null = null;
@@ -69,9 +69,8 @@ export function TerminalView() {
         } else {
             NewComponent = () => <TerminalItem terminal={terminals[curTabId]} />;
         };
-
         setViewComponent(() => NewComponent);
-    }, [curTabId, views, terminals]);
+    }, [views]);
 
     if (!curTabId || !ViewComponent) return null;
 
@@ -130,9 +129,13 @@ const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
         ...props.style,
         ...(
             isBroadcast ? {
-                borderColor: bgColor,
+                borderColor: '#16a34a',
+                padding: curFocusTerm == id ? '0' : '1px',
+                borderWidth: curFocusTerm == id ? '2px' : '1px',
                 borderStyle: curFocusTerm == id ? 'solid' : 'dashed'
-            } : {}
+            } : {
+                padding: '1px',
+            }
         )
     };
 
@@ -145,18 +148,18 @@ const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
     };
 
     return (
-        <div onClick={() => setCurFocusTerm(id)} style={style} className="p-0.5 border rounded-lg w-full h-full">
+        <div onClick={() => setCurFocusTerm(id)} style={style} className="border rounded-lg w-full h-full">
             <div className="relative w-full h-full overflow-hidden">
-                <div className="flex flex-col gap-2 w-full h-full rounded-md p-2" style={{ background: bgColor }}>
+                <div className="flex flex-col gap-2 w-full h-full rounded-md p-2 text-zinc-400" style={{ background: bgColor }}>
                     <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-2 text-white text-sm opacity-70 un-drag-bar">
-                            <IconTerminal2 className="size-4" />
+                        <div className="flex items-center gap-1 text-xs un-drag-bar">
+                            <IconCloudCode size={17} />
                             <p>{name}</p>
                         </div>
                         <div className="flex items-center gap-2">
                             <Button onClick={switchBroadcastStatus} variant="ghost" className="hover:bg-black p-1.5">
                                 {
-                                    curTab.broadcastIds.includes(id) ? <IconSitemapFilled color="#FFF" /> : <IconSitemap color="#FFF" />
+                                    isBroadcast ? <IconSitemapFilled /> : <IconSitemap />
                                 }
                             </Button>
                         </div>
