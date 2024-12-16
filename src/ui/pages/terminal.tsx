@@ -70,7 +70,7 @@ export function TerminalView() {
             NewComponent = () => <TerminalItem terminal={terminals[curTabId]} />;
         };
         setViewComponent(() => NewComponent);
-    }, [views]);
+    }, [curTabId, views]);
 
     if (!curTabId || !ViewComponent) return null;
 
