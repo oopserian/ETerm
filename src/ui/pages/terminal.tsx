@@ -16,7 +16,7 @@ export function Terminal() {
     const switchBroadcastInput = () => {
         if (!curTab.views) return;
         let broadcastIds = Object.keys(curTab.views).filter(key => key.indexOf('-') <= -1);
-        if (isBroadcast){
+        if (isBroadcast) {
             broadcastIds = [];
         };
         updateTab(curTabId, {
@@ -59,10 +59,9 @@ export function Terminal() {
 export function TerminalView() {
     const { terminals, tabs, curTabId } = useTerminalStore();
     const [ViewComponent, setViewComponent] = useState<React.FC | null>(null);
-
+    const views = useMemo(() => tabs[curTabId]?.views, [tabs]);
     useEffect(() => {
         if (!curTabId) return;
-        let views = tabs[curTabId]?.views;
         let NewComponent: React.FC | null = null;
         if (views) {
             const splitViews = Object.values(views).filter((view) => view.type);
@@ -72,7 +71,7 @@ export function TerminalView() {
         };
 
         setViewComponent(() => NewComponent);
-    }, [curTabId, tabs, terminals]);
+    }, [curTabId, views, terminals]);
 
     if (!curTabId || !ViewComponent) return null;
 

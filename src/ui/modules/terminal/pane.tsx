@@ -4,12 +4,13 @@ import { FitAddon } from "@xterm/addon-fit";
 import { WebglAddon } from '@xterm/addon-webgl';
 import useTerminalStore from "@/stores/useTerminalStore";
 import { debounce } from "@/lib/utils";
+import { termService } from "@/hooks/useTerminal";
 
 export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bgColor }) => {
-    const terminalRef = useRef<HTMLDivElement | null>(null);
     const { curFocusTerm, curTabId, tabs, setCurFocusTerm } = useTerminalStore();
     const curTab = useMemo(() => tabs[curTabId], [curTabId, tabs]);
     const isBroadcast = useMemo(() => curTab.broadcastIds.includes(id), [curTab, curFocusTerm])
+    const terminalRef = useRef<HTMLDivElement | null>(null);
     const [terminal, setTerminal] = useState<Xterm>();
 
     const autoFocus = () => {
@@ -34,23 +35,12 @@ export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bg
         t.open(terminalRef.current!);
         t.loadAddon(webglAddon);
 
-        t.onResize(({ cols, rows }) => {
-            window.terminal.setWindowSize(id, { cols, rows });
-        });
+        t.onResize(({ cols, rows }) => termService.updateSize(id, cols, rows));
 
         // TODO setTimeout临时处理xterm的dimensions报错
         setTimeout(() => fitAddon.fit(), 0);
 
-        t.onData((command) => {
-            window.terminal.input({
-                ids: isBroadcast ? curTab.broadcastIds : [id],
-                command
-            });
-        });
-
-        window.terminal.getSessionLogs(id!).then(logs => {
-            t.write(logs);
-        });
+        termService.getSessionLogs(id).then(logs => t.write(logs));
 
         return {
             terminal: t,
@@ -70,11 +60,11 @@ export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bg
             setCurFocusTerm(id);
         });
 
-        const unSub = window.terminal.subscribeOutput((data) => {
+        const unSub = termService.onOutput((data) => {
             if (data.id == id) {
                 terminal.write(data.data)
             }
-        });
+        })
 
         return () => {
             terminal.dispose();
@@ -86,6 +76,17 @@ export const TerminalPane: React.FC<{ id: string, bgColor: string }> = ({ id, bg
     useEffect(() => {
         autoFocus();
     }, [curFocusTerm]);
+
+    useEffect(() => {
+        const termDataHandler = terminal?.onData((command) => {
+            let ids = isBroadcast ? curTab.broadcastIds : [id];
+            termService.input(ids, command);
+        });
+
+        return () => {
+            termDataHandler && termDataHandler.dispose();
+        };
+    }, [curTab, terminal])
 
     return (
         <div className="w-full h-full overflow-hidden terminal-scroll" ref={terminalRef}></div>
