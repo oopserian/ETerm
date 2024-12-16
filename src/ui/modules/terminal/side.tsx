@@ -1,4 +1,4 @@
-import { Button } from "@/components/button/button"
+import { Button } from "@/components/ui/button"
 import { IconCode, IconPalette, IconHistoryToggle } from "@tabler/icons-react"
 import { useEffect, useMemo, useState } from "react"
 export const TerminalSide: React.FC = () => {
@@ -52,8 +52,8 @@ export const CommandItem: React.FC<{ data: CommandSnippetData }> = ({ data }) =>
             <div className="flex items-center justify-between gap-2 h-5">
                 <p className=" text-ellipsis whitespace-nowrap overflow-hidden">{data.name || data.des || data.command}</p>
                 <div className="gap-1 whitespace-nowrap hidden group-hover:flex">
-                    <Button size="sm" variant="secondary">运行</Button>
-                    <Button size="sm" variant="secondary">粘贴</Button>
+                    <Button size="sm" variant="ghost">运行</Button>
+                    <Button size="sm" variant="ghost">粘贴</Button>
                 </div>
             </div>
             <div className="text-sm text-black/50 leading-4">{data.des || data.command}</div>

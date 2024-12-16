@@ -1,4 +1,4 @@
-import { Button } from "@/components/button/button"
+import { Button } from "@/components/ui/button"
 import { CardItem } from "@/components/card/card"
 import Dialog from "@/components/dialog/dialog";
 import { FormInput, FormItem, FormTextarea } from "@/components/form/form";

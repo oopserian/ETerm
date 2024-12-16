@@ -1,4 +1,4 @@
-import { Button } from "@/components/button/button";
+import { Button } from "@/components/ui/button";
 import Dialog from "@/components/dialog/dialog";
 import { FormInput, FormItem } from "@/components/form/form";
 import { useState } from "react";
@@ -55,7 +55,7 @@ export const CreateSSHDialog: React.FC<{ open: boolean, onclose: () => void }> =
                         <FormInput name="password" type="password" value={form?.password} onChange={handleChange}></FormInput>
                     </FormItem>
                     <div className="flex gap-2">
-                        <Button onClick={onclose} variant="outline" className="justify-center w-full">取消</Button>
+                        <Button type="button" onClick={onclose} variant="outline" className="justify-center w-full">取消</Button>
                         <Button type="submit" className="justify-center w-full">保存</Button>
                     </div>
                 </div>

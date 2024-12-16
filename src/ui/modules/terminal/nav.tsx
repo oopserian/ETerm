@@ -1,11 +1,11 @@
 import LoadingRing from "@/assets/loading-ring.svg";
-import { Button } from "@/components/button/button";
 import { cn } from "@/lib/utils";
 import useTerminalStore, { TerminalTab } from "@/stores/useTerminalStore";
 import { useDraggable } from "@dnd-kit/core";
 import { ReactNode, useMemo } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { IconLayoutBoardSplit, IconTerminal2, IconX, IconCheck } from "@tabler/icons-react";
+import { buttonVariants, Button } from "@/components/ui/button";
 
 interface NavItemForTerminalProp extends React.LinkHTMLAttributes<HTMLLinkElement> {
     id: string,
@@ -28,7 +28,7 @@ export const TerminalNavs: React.FC = () => {
 }
 
 
-export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, tab, ...prop }) => {
+export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, tab }) => {
     const navigate = useNavigate();
     const { curTabId, terminals, deleteView, activeTab } = useTerminalStore();
     const { attributes, listeners, setNodeRef } = useDraggable({
@@ -51,17 +51,18 @@ export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, tab, 
 
     return (
         <NavLink onClick={selectTab} ref={setNodeRef} {...listeners} {...attributes} to={'/terminal'} className={({ isActive }) => cn(
-            (isActive && curTabId == id) ? "[&_button]:bg-white" : ""
+            buttonVariants({
+                variant: isActive && curTabId == id ? "default" : "ghost",
+                size: 'sm'
+            }), 'justify-start group'
         )}>
-            <Button variant="ghost" className={cn('w-full p-1 text-xs group', prop.className)}>
-                <div className={cn('relative size-6 flex items-center justify-center rounded-md text-white bg-slate-600')}>
-                    {terminals[id]?.status && <StatusBadge status={terminals[id]?.status} />}
-                    {tab?.views ? <IconLayoutBoardSplit /> : <IconTerminal2 />}
-                </div>
-                <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{tab?.name}</p>
-                <Button as="div" onClick={(e) => deleteTab(e)} variant="ghost" className="opacity-0 size-6 p-1.5 justify-center group-hover:opacity-100 hover:bg-zinc-100">
-                    <IconX />
-                </Button>
+            <div className="relative">
+                {terminals[id]?.status && <StatusBadge status={terminals[id]?.status} />}
+                {tab?.views ? <IconLayoutBoardSplit /> : <IconTerminal2 />}
+            </div>
+            <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{tab?.name}</p>
+            <Button asChild onClick={(e) => deleteTab(e)} variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100">
+                <IconX />
             </Button>
         </NavLink>
     )

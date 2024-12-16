@@ -1,12 +1,12 @@
 import '@xterm/xterm/css/xterm.css';
 import { cn } from '@/lib/utils';
 import { useDroppable } from '@dnd-kit/core';
-import { Button } from '@/components/button/button';
+import { Button } from '@/components/ui/button';
 import { TerminalSide } from '@/modules/terminal/side';
 import { TerminalPane } from '@/modules/terminal/pane';
 import React, { useEffect, useMemo, useState } from "react";
 import useTerminalStore, { Position, TerminalData, View } from '@/stores/useTerminalStore';
-import { IconTerminal2, IconLayoutSidebarRight, IconLayoutSidebarRightFilled, IconSitemap, IconSitemapFilled, IconCloudCode } from '@tabler/icons-react';
+import { IconLayoutSidebarRight, IconLayoutSidebarRightFilled, IconSitemap, IconSitemapFilled, IconCloudCode } from '@tabler/icons-react';
 
 export function Terminal() {
     const { curTabId, tabs, updateTab } = useTerminalStore();
@@ -33,12 +33,12 @@ export function Terminal() {
     return (
         <div className="flex flex-col gap-1 flex-1 w-full h-full py-1 pr-1">
             <div className="flex px-1 gap-1 w-full justify-end items-center">
-                <Button onClick={switchBroadcastInput} variant="ghost" className="p-1.5">
+                <Button onClick={switchBroadcastInput} variant="ghost" size="icon">
                     {
                         isBroadcast ? <IconSitemapFilled /> : <IconSitemap />
                     }
                 </Button>
-                <Button onClick={switchSidebarVisible} variant="ghost" className="p-1.5">
+                <Button onClick={switchSidebarVisible} variant="ghost" size="icon">
                     {
                         curTab.sidebarVisible ? <IconLayoutSidebarRightFilled /> : <IconLayoutSidebarRight />
                     }
@@ -157,7 +157,7 @@ const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
                             <p>{name}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Button onClick={switchBroadcastStatus} variant="ghost" className="hover:bg-black p-1.5">
+                            <Button onClick={switchBroadcastStatus} variant="ghost" size="icon">
                                 {
                                     isBroadcast ? <IconSitemapFilled /> : <IconSitemap />
                                 }

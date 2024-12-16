@@ -1,10 +1,11 @@
-import { Button } from "@/components/button/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { NavLink, Route, Routes } from "react-router-dom";
 import { TerminalNavs } from "./terminal/nav";
 import { Home } from "@/pages/home";
 import { Snippet } from "@/pages/snippet";
 import { Terminal } from "@/pages/terminal";
-import { IconServer2,IconCode,IconTerminal2 } from "@tabler/icons-react";
+import { IconServer2, IconCode, IconTerminal2 } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 
 const routes = [
     {
@@ -67,13 +68,17 @@ const Nav = () => {
             <div className="py-2 px-3 pt-14 flex flex-col gap-1 text-zinc-500 w-full max-w-48">
                 {
                     routes.map((route, index) => (
-                        !route.hide && <NavLink key={index} to={route.path} className={({ isActive }) => isActive ? "[&_button]:bg-white" : ""}>
-                            <Button variant="ghost" className="w-full p-1 text-xs">
-                                <div className="size-6 flex items-center justify-center">
-                                    {route.icon}
-                                </div>
-                                <p>{route.title}</p>
-                            </Button>
+                        !route.hide &&
+                        <NavLink key={index} to={route.path} className={
+                            ({ isActive }) => cn(
+                                buttonVariants({
+                                    variant: isActive ? "default" : "ghost",
+                                    size: 'sm'
+                                }),
+                                'justify-start')
+                        }>
+                            <i>{route.icon}</i>
+                            <p>{route.title}</p>
                         </NavLink>
                     ))
                 }

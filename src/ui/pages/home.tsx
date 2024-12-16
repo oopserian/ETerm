@@ -4,7 +4,7 @@ import useHostStore from "@/stores/useHostStore"
 import useTerminalStore from "@/stores/useTerminalStore";
 import { toast } from "sonner";
 import { CardItem } from "@/components/card/card";
-import { Button } from "@/components/button/button";
+import { Button } from "@/components/ui/button";
 import { CreateSSHDialog } from "@/modules/ssh";
 
 export const Home = () => {
