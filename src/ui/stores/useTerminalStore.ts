@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { closeTerminals } from "@/hooks/useTerminal";
+import { termService } from "@/hooks/useTerminal";
 import { createSplitView } from "@/helpers/splitViewHelpers";
 
 export type Position = 'top' | 'left' | 'right' | 'bottom';
@@ -91,7 +91,7 @@ const useTerminalStore = create<TerminalStore>((set, get) => ({
         } else {
             terminalIds = [tabs[tabId].id];
         };
-        closeTerminals(terminalIds);
+        termService.close(terminalIds);
         delete tabs[tabId];
         return ({
             tabs
