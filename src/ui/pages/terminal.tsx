@@ -1,17 +1,19 @@
 import '@xterm/xterm/css/xterm.css';
 import { cn } from '@/lib/utils';
 import { useDroppable } from '@dnd-kit/core';
+import { Toggle } from "@/components/ui/toggle";
 import { Button } from '@/components/ui/button';
 import { TerminalSide } from '@/modules/terminal/side';
 import { TerminalPane } from '@/modules/terminal/pane';
 import React, { useEffect, useMemo, useState } from "react";
 import useTerminalStore, { Position, TerminalData, View } from '@/stores/useTerminalStore';
 import { IconLayoutSidebarRight, IconLayoutSidebarRightFilled, IconSitemap, IconSitemapFilled, IconCloudCode } from '@tabler/icons-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function Terminal() {
     const { curTabId, tabs, updateTab } = useTerminalStore();
     const curTab = useMemo(() => tabs[curTabId], [curTabId, tabs]);
-    const isBroadcast = useMemo(() => curTab?.broadcastIds.length, [curTab]);
+    const isBroadcast = useMemo(() => curTab?.broadcastIds.length > 0, [curTab]);
     if (!curTab) return;
     const switchBroadcastInput = () => {
         if (!curTab.views) return;
@@ -33,16 +35,19 @@ export function Terminal() {
     return (
         <div className="flex flex-col gap-1 flex-1 w-full h-full py-1 pr-1">
             <div className="flex px-1 gap-1 w-full justify-end items-center">
-                <Button onClick={switchBroadcastInput} variant="ghost" size="icon">
-                    {
-                        isBroadcast ? <IconSitemapFilled /> : <IconSitemap />
-                    }
-                </Button>
-                <Button onClick={switchSidebarVisible} variant="ghost" size="icon">
-                    {
-                        curTab.sidebarVisible ? <IconLayoutSidebarRightFilled /> : <IconLayoutSidebarRight />
-                    }
-                </Button>
+                <Tooltip>
+                    <TooltipTrigger>
+                        <Toggle asChild className="un-drag-bar" size="sm" onPressedChange={switchBroadcastInput} pressed={isBroadcast}>
+                            {isBroadcast ? <IconSitemapFilled /> : <IconSitemap />}
+                        </Toggle>
+                    </TooltipTrigger>
+                    <TooltipContent side="left">
+                        <p>{isBroadcast ? '取消全部广播' : '全部广播'}</p>
+                    </TooltipContent>
+                </Tooltip>
+                <Toggle className="un-drag-bar" size="sm" onPressedChange={switchSidebarVisible} pressed={curTab.sidebarVisible}>
+                    {curTab.sidebarVisible ? <IconLayoutSidebarRightFilled /> : <IconLayoutSidebarRight />}
+                </Toggle>
             </div>
             <div className="flex gap-1 w-full h-full overflow-hidden">
                 <div className={cn("w-full h-full", curTab.sidebarVisible ? "w-[70%]" : "w-full")}>
@@ -157,11 +162,16 @@ const TerminalItem: React.FC<TerminalItemProps> = ({ terminal, ...props }) => {
                             <p>{name}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Button onClick={switchBroadcastStatus} variant="ghost" size="icon">
-                                {
-                                    isBroadcast ? <IconSitemapFilled /> : <IconSitemap />
-                                }
-                            </Button>
+                            <Tooltip>
+                                <TooltipTrigger>
+                                    <Toggle asChild size="sm" onPressedChange={switchBroadcastStatus} pressed={isBroadcast}>
+                                        {isBroadcast ? <IconSitemapFilled /> : <IconSitemap />}
+                                    </Toggle>
+                                </TooltipTrigger>
+                                <TooltipContent side="left">
+                                    <p>{isBroadcast ? '取消广播' : '广播'}</p>
+                                </TooltipContent>
+                            </Tooltip>
                         </div>
                     </div>
                     <TerminalPane id={id} bgColor={bgColor}></TerminalPane>

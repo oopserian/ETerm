@@ -45,9 +45,7 @@ export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, tab }
         };
     };
 
-    const selectTab = () => {
-        activeTab(id);
-    };
+    const selectTab = () => activeTab(id);
 
     return (
         <NavLink onClick={selectTab} ref={setNodeRef} {...listeners} {...attributes} to={'/terminal'} className={({ isActive }) => cn(
@@ -61,7 +59,7 @@ export const NavItemForTerminal: React.FC<NavItemForTerminalProp> = ({ id, tab }
                 {tab?.views ? <IconLayoutBoardSplit /> : <IconTerminal2 />}
             </div>
             <p className="text-nowrap text-ellipsis overflow-hidden flex-1 text-start">{tab?.name}</p>
-            <Button asChild onClick={(e) => deleteTab(e)} variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100">
+            <Button onClick={deleteTab} variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100">
                 <IconX />
             </Button>
         </NavLink>

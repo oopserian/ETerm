@@ -1,23 +1,32 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button"
 import { IconCode, IconPalette, IconHistoryToggle } from "@tabler/icons-react"
 import { useEffect, useMemo, useState } from "react"
 export const TerminalSide: React.FC = () => {
     return (
         <div className="p-1 w-full h-full flex flex-col gap-2 overflow-hidden">
-            <div className="bg-gray-200 rounded-lg p-1 grid grid-cols-3 gap-1">
-                <Button className="justify-center" variant="secondary">
-                    <IconCode />
-                </Button>
-                <Button className="justify-center" variant="ghost">
-                    <IconHistoryToggle />
-                </Button>
-                <Button className="justify-center" variant="ghost">
-                    <IconPalette />
-                </Button>
-            </div>
-            <div className="w-full h-full overflow-auto">
-                <Commands />
-            </div>
+            <Tabs defaultValue="command">
+                <TabsList className="w-full">
+                    <TabsTrigger className="w-full" value="command">
+                        <IconCode className="size-5" />
+                    </TabsTrigger>
+                    <TabsTrigger className="w-full" value="history">
+                        <IconHistoryToggle className="size-5" />
+                    </TabsTrigger>
+                    <TabsTrigger className="w-full" value="theme">
+                        <IconPalette className="size-5" />
+                    </TabsTrigger>
+                </TabsList>
+                <TabsContent value="command">
+                    <Commands />
+                </TabsContent>
+                <TabsContent value="history">
+                    历史记录
+                </TabsContent>
+                <TabsContent value="theme">
+                    主题
+                </TabsContent>
+            </Tabs>
         </div>
     )
 }

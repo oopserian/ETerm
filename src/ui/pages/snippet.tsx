@@ -99,7 +99,7 @@ export const CreateSnippet: React.FC<{ open: boolean, onclose: () => void }> = (
                         <FormTextarea rows={6} className="resize-none" name="command" value={form?.command} onChange={handleChange}></FormTextarea>
                     </FormItem>
                     <div className="flex gap-2">
-                        <Button onClick={onclose} variant="outline" className="justify-center w-full">取消</Button>
+                        <Button type="button" onClick={onclose} variant="outline" className="justify-center w-full">取消</Button>
                         <Button type="submit" className="justify-center w-full">保存</Button>
                     </div>
                 </div>
