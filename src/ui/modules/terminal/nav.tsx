@@ -80,7 +80,7 @@ const StatusBadge: React.FC<{ status: TerminalStatus }> = ({ status }) => {
     };
 
     return (
-        <div className={cn('absolute border-zinc-100 rounded-full p-0.5 -top-1 -left-1 size-3 text-[0.5rem] leading-[0.5rem] flex items-center justify-center border opacity-100 scale-100',
+        <div className={cn('[&_svg]:size-full absolute border-zinc-100 text-white rounded-full p-0.5 -top-1 -left-1 size-3 text-[0.5rem] leading-[0.5rem] flex items-center justify-center border opacity-100 scale-100',
             { 'bg-blue-400': status == 'connecting' },
             { 'bg-lime-500 transition-[opacity,transform] duration-300 delay-500 opacity-0 scale-0': status == "connected" },
             { 'bg-red-500': status == "error" },
