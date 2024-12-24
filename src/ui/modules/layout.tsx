@@ -1,4 +1,4 @@
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { NavLink, Route, Routes } from "react-router-dom";
 import { TerminalNavs } from "./terminal/nav";
 import { Home } from "@/pages/home";

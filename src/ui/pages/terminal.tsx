@@ -2,7 +2,6 @@ import '@xterm/xterm/css/xterm.css';
 import { cn } from '@/lib/utils';
 import { useDroppable } from '@dnd-kit/core';
 import { Toggle } from "@/components/ui/toggle";
-import { Button } from '@/components/ui/button';
 import { TerminalSide } from '@/modules/terminal/side';
 import { TerminalPane } from '@/modules/terminal/pane';
 import React, { useEffect, useMemo, useState } from "react";
