@@ -1,0 +1,73 @@
+name: Release
+
+on:
+ push:
+    branches:
+      - main
+
+jobs:
+  build-desktop:
+    strategy:
+      matrix:
+        settings:
+          - host: macos-13
+            target: x86_64-apple-darwin
+            bundles: dmg,app
+            os: darwin
+            arch: x86_64
+            pack-runner: pnpm run pack:mac
+          - host: macos-14
+            target: aarch64-apple-darwin
+            bundles: dmg,app
+            os: darwin
+            arch: aarch64
+            pack-runner: pnpm run pack:mac
+          - host: windows-latest
+            target: x86_64-pc-windows-msvc
+            bundles: msi
+            os: windows
+            arch: x86_64
+            pack-runner: pnpm run pack:win
+          - host: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            bundles: deb
+            os: linux
+            arch: x86_64
+            pack-runner: pnpm run pack:linux
+    name: Build ${{ matrix.settings.target }}
+    runs-on: ${{ matrix.settings.host }}
+    steps:
+        - name: Checkout repository
+          uses: actions/checkout@v2
+
+        - name: Cache pnpm modules
+          uses: actions/cache@v2
+          with:
+            path: ~/.pnpm-store
+            key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+            restore-keys: |
+              ${{ runner.os }}-pnpm-store-
+
+        - name: Set up Node.js
+          uses: actions/setup-node@v4
+          
+        - name: Install pnpm deps
+          shell: ${{ matrix.settings.os == 'windows' && 'powershell' || 'bash' }}
+          run: pnpm i --frozen-lockfile
+
+        - name: Package Electron App
+          run: ${{ matrix.settings.pack-runner }}
+
+        - name: Set version number
+          id: set_version
+          run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+
+        - name: Upload Release Assets
+          uses: softprops/action-gh-release@v1
+          with:
+            files: |
+              dist/**/*.dmg
+              dist/**/*.exe
+              dist/**/*.AppImage
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
