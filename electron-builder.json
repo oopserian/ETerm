@@ -1,11 +1,11 @@
 {
-    "appId": "com.erian.electron",
-    "icon": "./icon.png",
+    "appId": "com.erian.eterm",
+    "icon": "./logo.png",
     "files": [
         "dist-electron",
         "dist-react"
     ],
-    "extraResources": ["dist-electron/preload"],
+    "extraResources": ["dist-electron/preload.js"],
     "mac": {
         "target": "dmg"
     },
