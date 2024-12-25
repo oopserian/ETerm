@@ -19,8 +19,10 @@
     "build": "tsc && vite build",
     "transpile:electron": "tsc --project src/electron/tsconfig.json",
     "dev:electron": "pnpm run transpile:electron && cross-env NODE_ENV=development electron .",
+    "pack": "pnpm run transpile:electron && pnpm run build && electron-builder",
     "pack:linux": "pnpm run transpile:electron && pnpm run build && electron-builder --linux --x64",
-    "pack:mac": "pnpm run transpile:electron && pnpm run build && electron-builder --mac --arm64",
+    "pack:mac:arm64": "pnpm run transpile:electron && pnpm run build && electron-builder --mac --arm64",
+    "pack:mac:x64": "pnpm run transpile:electron && pnpm run build && electron-builder --mac --x64",
     "pack:win": "pnpm run transpile:electron && pnpm run build && electron-builder --win --x64"
   },
   "dependencies": {

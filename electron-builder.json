@@ -1,22 +1,23 @@
 {
     "appId": "com.erian.eterm",
+    "productName": "Eterm",
+    "artifactName": "${productName}-${os}-${arch}.${ext}",
     "icon": "./logo.png",
     "files": [
         "dist-electron",
         "dist-react"
     ],
-    "extraResources": ["dist-electron/preload.js"],
+    "extraResources": [
+        "dist-electron/preload.js"
+    ],
     "mac": {
         "target": "dmg"
     },
     "linux": {
-        "target": "AppImage",
+        "target": "deb",
         "category": "Utility"
     },
     "win": {
-        "target": [
-            "portable",
-            "msi"
-        ]
+        "target": "msi"
     }
 }
