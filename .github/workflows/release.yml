@@ -55,9 +55,9 @@ jobs:
               ~/.pnpm-store
               node_modules
               .next/cache
-            key: ${{ runner.os }}-deps-${{ hashFiles('**/pnpm-lock.yaml') }}
+            key: deps-cache-${{ runner.os }}-${{ matrix.settings.arch }}-${{ hashFiles('**/pnpm-lock.yaml') }}
             restore-keys: |
-              ${{ runner.os }}-deps-
+              deps-cache-${{ runner.os }}-${{ matrix.settings.arch }}-
 
         - name: Cache Electron
           uses: actions/cache@v4
@@ -68,9 +68,9 @@ jobs:
               ~/.cache/electron
               ~/.cache/electron-builder
               ${{ github.workspace }}/dist
-            key: ${{ runner.os }}-electron-${{ hashFiles('package.json') }}
+            key: electron-cache-${{ runner.os }}-${{ matrix.settings.arch }}-${{ hashFiles('package.json') }}
             restore-keys: |
-              ${{ runner.os }}-electron-
+              electron-cache-${{ runner.os }}-${{ matrix.settings.arch }}-
 
         - name: Install Dependencies
           run: pnpm i --frozen-lockfile
