@@ -15,25 +15,21 @@ jobs:
             bundles: dmg,app
             os: darwin
             arch: x86_64
-            pack-runner: pnpm run pack:mac
           - host: macos-14
             target: aarch64-apple-darwin
             bundles: dmg,app
             os: darwin
             arch: aarch64
-            pack-runner: pnpm run pack:mac
           - host: windows-latest
             target: x86_64-pc-windows-msvc
             bundles: msi
             os: windows
             arch: x86_64
-            pack-runner: pnpm run pack:win
           - host: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
             bundles: deb
             os: linux
             arch: x86_64
-            pack-runner: pnpm run pack:linux
     name: Build ${{ matrix.settings.target }}
     runs-on: ${{ matrix.settings.host }}
     steps:
@@ -62,13 +58,9 @@ jobs:
           run: pnpm i --frozen-lockfile
         
         - name: Package Electron App
-          run: ${{ matrix.settings.pack-runner }}
+          run: pnpm run pack
           env:
             GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
-        - name: Set version number
-          id: set_version
-          run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
         - name: Upload Release Assets
           uses: softprops/action-gh-release@v2
