@@ -51,8 +51,14 @@ jobs:
         - name: Set up Node.js
           uses: actions/setup-node@v4
           
-        - name: Install pnpm deps
-          shell: ${{ matrix.settings.os == 'windows' && 'powershell' || 'bash' }}
+        - name: Bash Install pnpm deps
+          shell: bash
+          if: runner.os != 'Windows'
+          run: pnpm i --frozen-lockfile
+        
+        - name: Powershell Install pnpm deps
+          shell: powershell
+          if: runner.os == 'Windows' 
           run: pnpm i --frozen-lockfile
 
         - name: Package Electron App
