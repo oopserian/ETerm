@@ -68,7 +68,7 @@ jobs:
             tag_name: ${{ github.ref_name }}
             files: |
               dist/**/*.dmg
-              dist/**/*.exe
-              dist/**/*.AppImage
+              dist/**/*.msi
+              dist/**/*.deb
           env:
             GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
