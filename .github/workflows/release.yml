@@ -59,17 +59,12 @@ jobs:
             node-version: 22
           
         - name: Bash Install pnpm deps
-          shell: bash
-          if: runner.os != 'Windows'
           run: pnpm i --frozen-lockfile
         
-        - name: Powershell Install pnpm deps
-          shell: powershell
-          if: runner.os == 'Windows' 
-          run: pnpm i --frozen-lockfile
-
         - name: Package Electron App
           run: ${{ matrix.settings.pack-runner }}
+          env:
+            GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
         - name: Set version number
           id: set_version
