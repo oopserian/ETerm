@@ -8,9 +8,9 @@ import Command from "./modules/command";
 
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({
-        width: 1200,
+        width: 1000,
         minWidth: 800,
-        height: 800,
+        height: 600,
         minHeight: 600,
         webPreferences: {
             preload: getPreloadPath()
