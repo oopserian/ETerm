@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { CardItem } from "@/components/card/card";
 import { Button } from "@/components/ui/button";
 import { CreateSSHDialog } from "@/modules/ssh";
+import { EmptyList } from "@/components/empty/empty";
 
 export const Home = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -27,15 +28,18 @@ export const Home = () => {
                         <p>添加服务器</p>
                     </Button>
                 </div>
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
-                    {
-                        hostList.length ? (
-                            hostList.map((item) => (
-                                <HostItem key={item.id} host={item}></HostItem>
-                            ))
-                        ) : ''
-                    }
-                </div>
+                {
+                    hostList.length ? (
+                        <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
+                            {
+                                hostList.length ? (
+                                    hostList.map((item) => (
+                                        <HostItem key={item.id} host={item}></HostItem>
+                                    ))
+                                ) : ''
+                            }
+                        </div>) : <EmptyList></EmptyList>
+                }
             </div>
         </>
     )

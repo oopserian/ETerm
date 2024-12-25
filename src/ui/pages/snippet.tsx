@@ -5,6 +5,7 @@ import { FormInput, FormItem, FormTextarea } from "@/components/form/form";
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { IconCode, IconPlus } from "@tabler/icons-react";
+import { EmptyList } from "@/components/empty/empty";
 
 export const Snippet = () => {
     const [open, setOpen] = useState<boolean>(false);
@@ -22,7 +23,7 @@ export const Snippet = () => {
     return (
         <>
             <CreateSnippet open={open} onclose={() => setOpen(false)} />
-            <div className="py-3 pr-3 flex flex-col gap-2">
+            <div className="py-3 pr-3 flex flex-col gap-2 w-full h-full">
                 <div className="flex justify-between">
                     <p className="font-medium text-lg">命令片段</p>
                     <Button onClick={() => setOpen(true)} variant="default" size="sm" className="justify-center">
@@ -30,13 +31,16 @@ export const Snippet = () => {
                         <p>新增片段</p>
                     </Button>
                 </div>
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
-                    {
-                        commandSnippetList.map(item => (
-                            <SnippetItem key={item.id} data={item}></SnippetItem>
-                        ))
-                    }
-                </div>
+                {
+                    commandSnippetList.length ? (
+                        <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
+                            {
+                                commandSnippetList.map(item => (
+                                    <SnippetItem key={item.id} data={item}></SnippetItem>
+                                ))
+                            }
+                        </div>) : <EmptyList></EmptyList>
+                }
             </div>
         </>
     )
