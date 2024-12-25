@@ -2,8 +2,8 @@ name: Release
 
 on:
  push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 jobs:
   build-desktop:
@@ -71,8 +71,9 @@ jobs:
           run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
         - name: Upload Release Assets
-          uses: softprops/action-gh-release@v1
+          uses: softprops/action-gh-release@v2
           with:
+            tag_name: ${{ github.ref_name }}
             files: |
               dist/**/*.dmg
               dist/**/*.exe
