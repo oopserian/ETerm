@@ -1,41 +1,34 @@
 import { Button } from "@/components/ui/button"
 import { CardItem } from "@/components/card/card"
-import Dialog from "@/components/dialog/dialog";
-import { FormInput, FormItem, FormTextarea } from "@/components/form/form";
-import React, { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
-import { IconCode, IconPlus } from "@tabler/icons-react";
+import React, { useEffect, useMemo } from "react";
+import { IconCode, IconEdit, IconPlus, IconX } from "@tabler/icons-react";
 import { EmptyList } from "@/components/empty/empty";
+import { SnippetConfigDialog } from "@/modules/snippet/ConfigDialog";
+import { useSnippetStore } from "@/stores/useSnippetStore";
 
 export const Snippet = () => {
-    const [open, setOpen] = useState<boolean>(false);
-    const [commandSnippet, setCommandSnippet] = useState<Record<number, CommandSnippetData>>({});
-    const commandSnippetList = useMemo(() => Object.values(commandSnippet), [commandSnippet]);
-    const getData = async () => {
-        let data = await window.commandSnippet.get();
-        setCommandSnippet(data);
-    };
-
+    const { snippets, getSnippets } = useSnippetStore();
+    const snippetList = useMemo(() => Object.values(snippets), [snippets]);
     useEffect(() => {
-        getData();
-    }, [open]);
-
+        getSnippets();
+    }, []);
     return (
         <>
-            <CreateSnippet open={open} onclose={() => setOpen(false)} />
             <div className="py-3 pr-3 flex flex-col gap-2 w-full h-full">
                 <div className="flex justify-between">
                     <p className="font-medium text-lg">命令片段</p>
-                    <Button onClick={() => setOpen(true)} variant="default" size="sm" className="justify-center">
-                        <IconPlus />
-                        <p>新增片段</p>
-                    </Button>
+                    <SnippetConfigDialog onSuccess={getSnippets}>
+                        <Button variant="default" size="sm" className="justify-center">
+                            <IconPlus />
+                            <p>新增片段</p>
+                        </Button>
+                    </SnippetConfigDialog>
                 </div>
                 {
-                    commandSnippetList.length ? (
+                    snippetList.length ? (
                         <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
                             {
-                                commandSnippetList.map(item => (
+                                snippetList.map(item => (
                                     <SnippetItem key={item.id} data={item}></SnippetItem>
                                 ))
                             }
@@ -48,65 +41,33 @@ export const Snippet = () => {
 
 
 export const SnippetItem: React.FC<{ data: CommandSnippetData }> = ({ data }) => {
+    const { getSnippets } = useSnippetStore();
+    const del = async (e:any) => {
+        e.stopPropagation();
+        window.commandSnippet.delete(data.id);
+        getSnippets();
+    };
+
     return (
-        <CardItem icon={<IconCode />}>
-            <p className="text-xs">{data.name}</p>
-            <div className="flex text-xs text-zinc-500">
-                <p>{data.des || data.command}</p>
+        <CardItem className="group" icon={<IconCode />}>
+            <div className="flex justify-between items-center w-full">
+                <div>
+                    <p className="text-xs">{data.name}</p>
+                    <div className="flex text-xs text-zinc-500">
+                        <p>{data.des || data.command}</p>
+                    </div>
+                </div>
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100">
+                    <SnippetConfigDialog onSuccess={getSnippets} initialData={data}>
+                        <Button variant="ghost" size="icon">
+                            <IconEdit></IconEdit>
+                        </Button>
+                    </SnippetConfigDialog>
+                    <Button onClick={del} variant="ghost" size="icon">
+                        <IconX></IconX>
+                    </Button>
+                </div>
             </div>
         </CardItem>
     )
-}
-
-export const CreateSnippet: React.FC<{ open: boolean, onclose: () => void }> = ({ open, onclose }) => {
-    const [form, setForm] = useState<{
-        name: string,
-        des: string,
-        command: string
-    }>({
-        name: '',
-        des: '',
-        command: ''
-    });
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        let { name, value } = e.target;
-        setForm({
-            ...form,
-            [name]: value
-        });
-    };
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!form.command) {
-            toast.info('请填写命令!');
-            return;
-        };
-        window.commandSnippet.create(form);
-        onclose();
-        toast("🎉 成功添加片段");
-    };
-
-
-    return (
-        <Dialog title="新增代码片段" open={open} onClose={onclose}>
-            <form onSubmit={handleSubmit}>
-                <div className="flex flex-col gap-4">
-                    <FormItem title="名字">
-                        <FormInput name="name" value={form?.name} onChange={handleChange}></FormInput>
-                    </FormItem>
-                    <FormItem title="描述">
-                        <FormInput name="des" value={form?.des} onChange={handleChange}></FormInput>
-                    </FormItem>
-                    <FormItem title="命令*">
-                        <FormTextarea rows={6} className="resize-none" name="command" value={form?.command} onChange={handleChange}></FormTextarea>
-                    </FormItem>
-                    <div className="flex gap-2">
-                        <Button type="button" onClick={onclose} variant="outline" className="justify-center w-full">取消</Button>
-                        <Button type="submit" className="justify-center w-full">保存</Button>
-                    </div>
-                </div>
-            </form>
-        </Dialog>)
 }

@@ -8,6 +8,8 @@ export default class Command {
     }
     registerHandlers() {
         ipcMainHandle('createCommand', (_, data) => this.create(data));
+        ipcMainHandle('updateCommand', (_, id, data) => this.update(id, data));
+        ipcMainHandle('deleteCommand', (_, id) => this.delete(id));
         ipcMainHandle('getCommand', (_) => this.get());
     }
     create(data: Partial<CommandSnippetData>) {
@@ -28,9 +30,7 @@ export default class Command {
                 ...commandData[id],
                 ...data
             }
-        } else {
-
-        }
+        };
         dataStorage.save(commandData, 'command-data.json');
     }
     get() {

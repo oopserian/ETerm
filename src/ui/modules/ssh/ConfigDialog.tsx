@@ -72,17 +72,17 @@ export const SSHConfigDialog: React.FC<SSHConfigDialogProps> = ({ children, onSu
         });
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!validate()) return;
         if (initialData?.id) {
-            window.host.update({
+            await window.host.update(initialData.id, {
                 ...initialData,
                 ...form
             });
             toast("🎉 成功更新服务器");
         } else {
-            window.host.save(form);
+            await window.host.save(form);
             toast("🎉 成功添加服务器");
         };
         getHosts();

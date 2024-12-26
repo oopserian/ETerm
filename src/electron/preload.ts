@@ -20,7 +20,7 @@ export const host = {
     save: (data: Partial<HostData>) => ipcInvoke('saveHost', data),
     connect: (data: HostData) => ipcInvoke('connectHost', data),
     delete: (id: string) => ipcInvoke('deleteHost', id),
-    update: (data: Partial<HostData>) => ipcInvoke('updateHost', data)
+    update: (id: string, data: Partial<HostData>) => ipcInvoke('updateHost', id, data)
 };
 
 export const common = {
@@ -38,6 +38,8 @@ export const terminal = {
 
 export const commandSnippet = {
     create: (data: Partial<CommandSnippetData>) => ipcInvoke('createCommand', data),
+    update: (id: number, data: Partial<CommandSnippetData>) => ipcInvoke('updateCommand', id, data),
+    delete: (id: number) => ipcInvoke('deleteCommand', id),
     get: () => ipcInvoke('getCommand'),
 };
 

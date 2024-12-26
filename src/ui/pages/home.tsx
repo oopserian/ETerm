@@ -68,12 +68,12 @@ const HostItem: React.FC<{ host: HostData }> = ({ host }) => {
         e.stopPropagation();
         await window.host.delete(host.id!);
         getHosts();
-    }
+    };
 
     return (
         <CardItem className="group" onClick={connectHost} icon={<IconTerminal2 />}>
             <div className="flex justify-between items-center w-full">
-                <div className="">
+                <div>
                     <p className="text-xs">{host.alias}</p>
                     <div className="flex text-xs text-zinc-500">
                         <p>ssh</p>,
@@ -81,14 +81,14 @@ const HostItem: React.FC<{ host: HostData }> = ({ host }) => {
                     </div>
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100">
-                    <Button onClick={deleteHost} variant="ghost" size="icon">
-                        <IconX></IconX>
-                    </Button>
                     <SSHConfigDialog initialData={host}>
                         <Button variant="ghost" size="icon">
                             <IconEdit></IconEdit>
                         </Button>
                     </SSHConfigDialog>
+                    <Button onClick={deleteHost} variant="ghost" size="icon">
+                        <IconX></IconX>
+                    </Button>
                 </div>
             </div>
         </CardItem>

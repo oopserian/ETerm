@@ -34,7 +34,7 @@ type EventPayloadMapping = {
         result: Record<string, HostData>
     },
     updateHost: {
-        params: [data: Partial<HostData>],
+        params: [id: string, data: Partial<HostData>],
         result: void
     },
     decryptPassword: {
@@ -67,6 +67,14 @@ type EventPayloadMapping = {
     },
     createCommand: {
         params: [data: Partial<CommandSnippetData>],
+        result: void
+    },
+    updateCommand: {
+        params: [id: number, data: Partial<CommandSnippetData>],
+        result: void
+    },
+    deleteCommand:{
+        params: [id: number],
         result: void
     },
     getCommand: {
