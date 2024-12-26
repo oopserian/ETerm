@@ -1,10 +1,10 @@
 interface HostData {
-    id?: string,
+    id: string,
     host: string,
     port: string,
     username: string,
     password: string,
-    password_iv?: string,
+    password_iv: string,
     alias: string
 }
 
@@ -18,7 +18,7 @@ type TerminalStatus = 'connecting'
 
 type EventPayloadMapping = {
     saveHost: {
-        params: [data: HostData],
+        params: [data: Partial<HostData>],
         result: void
     },
     connectHost: {
@@ -32,6 +32,10 @@ type EventPayloadMapping = {
     getHost: {
         params: [],
         result: Record<string, HostData>
+    },
+    updateHost: {
+        params: [data: Partial<HostData>],
+        result: void
     },
     decryptPassword: {
         params: [password: string, iv: string],

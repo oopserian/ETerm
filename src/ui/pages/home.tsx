@@ -1,15 +1,14 @@
-import { IconTerminal2, IconPlus } from "@tabler/icons-react";
-import React, { useEffect, useMemo, useState } from "react"
+import { IconTerminal2, IconPlus, IconX, IconEdit } from "@tabler/icons-react";
+import React, { useEffect, useMemo } from "react"
 import useHostStore from "@/stores/useHostStore"
 import useTerminalStore from "@/stores/useTerminalStore";
-import { toast } from "sonner";
 import { CardItem } from "@/components/card/card";
 import { Button } from "@/components/ui/button";
-import { CreateSSHDialog } from "@/modules/ssh";
+import { SSHConfigDialog } from "@/modules/ssh";
 import { EmptyList } from "@/components/empty/empty";
+import { toast } from "sonner";
 
 export const Home = () => {
-    const [isOpen, setIsOpen] = useState<boolean>(false);
     const { hosts, getHosts } = useHostStore();
     const hostList = useMemo(() => Object.values(hosts), [hosts]);
 
@@ -19,14 +18,15 @@ export const Home = () => {
 
     return (
         <>
-            <CreateSSHDialog open={isOpen} onclose={() => setIsOpen(false)}></CreateSSHDialog>
-            <div className="py-3 pr-3 flex flex-col gap-2">
+            <div className="py-3 pr-3 flex flex-col gap-2 w-full h-full">
                 <div className="flex justify-between">
                     <p className="font-medium text-lg">服务器</p>
-                    <Button variant="default" size="sm" onClick={() => setIsOpen(true)}>
-                        <IconPlus></IconPlus>
-                        <p>添加服务器</p>
-                    </Button>
+                    <SSHConfigDialog>
+                        <Button variant="default" size="sm">
+                            <IconPlus></IconPlus>
+                            <p>添加服务器</p>
+                        </Button>
+                    </SSHConfigDialog>
                 </div>
                 {
                     hostList.length ? (
@@ -48,6 +48,7 @@ export const Home = () => {
 
 const HostItem: React.FC<{ host: HostData }> = ({ host }) => {
     let { addTab } = useTerminalStore();
+    const { getHosts } = useHostStore();
 
     const connectHost = async () => {
         try {
@@ -59,16 +60,36 @@ const HostItem: React.FC<{ host: HostData }> = ({ host }) => {
                 status: 'connecting'
             });
         } catch (err: any) {
-            toast.error(err.message)
+            toast(err.message);
         }
+    };
+
+    const deleteHost = async (e: any) => {
+        e.stopPropagation();
+        await window.host.delete(host.id!);
+        getHosts();
     }
 
     return (
-        <CardItem onClick={connectHost} icon={<IconTerminal2 />}>
-            <p className="text-xs">{host.alias}</p>
-            <div className="flex text-xs text-zinc-500">
-                <p>ssh</p>,
-                <p>{host.username}</p>
+        <CardItem className="group" onClick={connectHost} icon={<IconTerminal2 />}>
+            <div className="flex justify-between items-center w-full">
+                <div className="">
+                    <p className="text-xs">{host.alias}</p>
+                    <div className="flex text-xs text-zinc-500">
+                        <p>ssh</p>,
+                        <p>{host.username}</p>
+                    </div>
+                </div>
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100">
+                    <Button onClick={deleteHost} variant="ghost" size="icon">
+                        <IconX></IconX>
+                    </Button>
+                    <SSHConfigDialog initialData={host}>
+                        <Button variant="ghost" size="icon">
+                            <IconEdit></IconEdit>
+                        </Button>
+                    </SSHConfigDialog>
+                </div>
             </div>
         </CardItem>
     )

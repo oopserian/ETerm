@@ -12,6 +12,7 @@ export default class Host {
     }
     registerHandlers() {
         ipcMainHandle('saveHost', (_, data) => this.save(data));
+        ipcMainHandle('updateHost', (_, data) => this.update(data));
         ipcMainHandle('getHost', () => this.get());
         ipcMainHandle('deleteHost', (_, id) => this.delete(id));
         ipcMainHandle('connectHost', (_, data) => this.connect(data));
@@ -61,13 +62,26 @@ export default class Host {
             })
         })
     }
-    save(data: HostData) {
+    save(data: Partial<HostData>) {
         let dataStorage = new DataStorage();
         let hostData = dataStorage.load('host-data.json') || {};
         let id = `${data.host}:${data.port}`;
-        let { encryptedPassword, iv } = Encryption.encryptPassword(data.password);
+        let { encryptedPassword, iv } = Encryption.encryptPassword(data.password!);
         hostData[id] = {
             id,
+            ...data,
+            password: encryptedPassword,
+            password_iv: iv
+        };
+        dataStorage.save(hostData, 'host-data.json');
+    }
+    update(data: Partial<HostData>) {
+        let dataStorage = new DataStorage();
+        let hostData = dataStorage.load('host-data.json') || {};
+        let id = data.id!;
+        let { encryptedPassword, iv } = Encryption.encryptPassword(data.password!);
+        delete hostData[id];
+        hostData[id] = {
             ...data,
             password: encryptedPassword,
             password_iv: iv

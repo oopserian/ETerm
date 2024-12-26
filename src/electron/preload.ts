@@ -17,9 +17,10 @@ const ipcOn = <Key extends keyof EventPayloadMapping>(
 
 export const host = {
     get: () => ipcInvoke('getHost'),
-    save: (data: HostData) => ipcInvoke('saveHost', data),
+    save: (data: Partial<HostData>) => ipcInvoke('saveHost', data),
     connect: (data: HostData) => ipcInvoke('connectHost', data),
-    delete: (id: string) => ipcInvoke('deleteHost', id)
+    delete: (id: string) => ipcInvoke('deleteHost', id),
+    update: (data: Partial<HostData>) => ipcInvoke('updateHost', data)
 };
 
 export const common = {

@@ -15,7 +15,7 @@ export const CardItem: React.FC<CardItemProps> = ({ icon, children, ...props }) 
             <div className="size-8 p-1.5 flex items-center justify-center bg-slate-600 rounded-lg text-white">
                 {icon}
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col w-full">
                 {children}
             </div>
         </div>
