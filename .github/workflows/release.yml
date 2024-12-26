@@ -47,46 +47,37 @@ jobs:
           with:
             node-version: 22
             cache: 'pnpm'
-      
-        - name: Cache dependencies
-          uses: actions/cache@v4
-          with:
-            path: |
-              ~/.pnpm-store
-              node_modules
-              .next/cache
-            key: deps-cache-${{ runner.os }}-${{ matrix.settings.arch }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-            restore-keys: |
-              deps-cache-${{ runner.os }}-${{ matrix.settings.arch }}-
-
-        - name: Cache Electron
-          uses: actions/cache@v4
-          with:
-            path: |
-              ~/Library/Caches/electron
-              ~/Library/Caches/electron-builder
-              ~/.cache/electron
-              ~/.cache/electron-builder
-              ${{ github.workspace }}/dist
-            key: electron-cache-${{ runner.os }}-${{ matrix.settings.arch }}-${{ hashFiles('package.json') }}
-            restore-keys: |
-              electron-cache-${{ runner.os }}-${{ matrix.settings.arch }}-
 
         - name: Install Dependencies
           run: pnpm i --frozen-lockfile
         
-        - name: Package Electron App
+        - name: Package App
           run: pnpm run pack
           env:
             GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+        - name: Get Release Description
+          id: release_description
+          run: |
+            # 从CHANGELOG.md获取最新版本的更新说明
+            DESCRIPTION=$(awk '/## \[/ {p=0} /## \['${GITHUB_REF#refs/tags/}'\]/ {p=1;next} p' CHANGELOG.md)
+            # 将多行文本转换为JSON字符串
+            DESCRIPTION="${DESCRIPTION//'%'/'%25'}"
+            DESCRIPTION="${DESCRIPTION//$'\n'/'%0A'}"
+            DESCRIPTION="${DESCRIPTION//$'\r'/'%0D'}"
+            echo "description=$DESCRIPTION" >> $GITHUB_OUTPUT
 
         - name: Upload Release Assets
           uses: softprops/action-gh-release@v2
           with:
             tag_name: ${{ github.ref_name }}
+            body: ${{ steps.release_description.outputs.description }}  # 添加发布说明
             files: |
               dist/**/*.dmg
               dist/**/*.msi
               dist/**/*.deb
+            draft: false
+            prerelease: false
+            generate_release_notes: true
           env:
             GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
