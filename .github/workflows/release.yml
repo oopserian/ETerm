@@ -59,19 +59,18 @@ jobs:
         - name: Get Release Description
           id: release_description
           run: |
-            # 从CHANGELOG.md获取最新版本的更新说明
-            DESCRIPTION=$(awk '/## \[/ {p=0} /## \['${GITHUB_REF#refs/tags/}'\]/ {p=1;next} p' CHANGELOG.md)
-            # 将多行文本转换为JSON字符串
-            DESCRIPTION="${DESCRIPTION//'%'/'%25'}"
-            DESCRIPTION="${DESCRIPTION//$'\n'/'%0A'}"
-            DESCRIPTION="${DESCRIPTION//$'\r'/'%0D'}"
-            echo "description=$DESCRIPTION" >> $GITHUB_OUTPUT
+            echo "Current tag: ${GITHUB_REF#refs/tags/}"
+            {
+              echo 'description<<EOF'
+              awk '/## \[/ {p=0} /## \['${GITHUB_REF#refs/tags/}'\]/ {p=1;next} p' CHANGELOG.md
+              echo 'EOF'
+            } >> "$GITHUB_OUTPUT"
 
         - name: Upload Release Assets
           uses: softprops/action-gh-release@v2
           with:
             tag_name: ${{ github.ref_name }}
-            body: ${{ steps.release_description.outputs.description }}  # 添加发布说明
+            body: ${{ steps.release_description.outputs.description }}  # release description
             files: |
               dist/**/*.dmg
               dist/**/*.msi
