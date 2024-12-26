@@ -59,10 +59,13 @@ jobs:
         - name: Get Release Description
           id: release_description
           run: |
-            echo "Current tag: ${GITHUB_REF#refs/tags/}"
+            VERSION=${GITHUB_REF#refs/tags/}
+            echo "Current tag: $VERSION"
+            # 读取 CHANGELOG.md 中的指定版本内容
             {
               echo 'description<<EOF'
-              awk '/## \[/ {p=0} /## \['${GITHUB_REF#refs/tags/}'\]/ {p=1;next} p' CHANGELOG.md
+              # 使用 sed 提取指定版本到下一个版本之间的内容
+              sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d'
               echo 'EOF'
             } >> "$GITHUB_OUTPUT"
 
@@ -77,6 +80,6 @@ jobs:
               dist/**/*.deb
             draft: false
             prerelease: false
-            generate_release_notes: true
+            generate_release_notes: false
           env:
             GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
