@@ -4,7 +4,7 @@ import useHostStore from "@/stores/useHostStore"
 import useTerminalStore from "@/stores/useTerminalStore";
 import { CardItem } from "@/components/card/card";
 import { Button } from "@/components/ui/button";
-import { SSHConfigDialog } from "@/modules/ssh";
+import { SSHConfigDialog } from "@/modules/ssh/ConfigDialog";
 import { EmptyList } from "@/components/empty/empty";
 import { toast } from "sonner";
 

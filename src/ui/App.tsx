@@ -1,13 +1,13 @@
-import { DndContextTerminal } from "./modules/dnd";
+import { TerminalDndContext } from "./modules/terminal/DndContext";
 import { subscribeTerminalUpdate } from "./hooks/useSubscribeMain";
-import { Layout } from "./modules/layout";
+import { Layout } from "./layouts";
 
 function App() {
   subscribeTerminalUpdate();
   return (
-    <DndContextTerminal>
-      <Layout/>
-    </DndContextTerminal>
+    <TerminalDndContext>
+      <Layout />
+    </TerminalDndContext>
   )
 }
 
