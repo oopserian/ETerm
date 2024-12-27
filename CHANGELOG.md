@@ -1,6 +1,6 @@
 # Changelog
 
-## [v0.1.5](https://github.com/catcoal/ETerm/releases) - 2024-12-26
+## [v0.1.5](https://github.com/catcoal/ETerm/compare/v0.1.4...v0.1.5) - 2024-12-26
 
 ### 新功能
 - 新增服务器的更/删
@@ -10,13 +10,13 @@
 - 优化数据处理逻辑
 
 
-## [v0.1.4] - 2024-12-25
+## [v0.1.4](https://github.com/catcoal/ETerm/compare/v0.1.3...v0.1.4) - 2024-12-25
 
 ### 优化
 - 调整窗口比例
 - 空数据处理
 
-## [v0.1.3] - 2024-12-25
+## [v0.1.3](https://github.com/catcoal/ETerm/compare/v0.0.1...v0.1.3) - 2024-12-25
 
 ### 新功能
 - 新增代码块
