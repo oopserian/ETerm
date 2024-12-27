@@ -56,30 +56,18 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-        - name: Get Release Description
-          id: release_description
+        - name: Get Release Notes
+          id: changelog
           run: |
             VERSION=${GITHUB_REF#refs/tags/}
-            echo "Current tag: $VERSION"
-            # 读取 CHANGELOG.md 中的指定版本内容
-            {
-              echo 'description<<EOF'
-              # 使用 sed 提取指定版本到下一个版本之间的内容
-              sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d'
-              echo 'EOF'
-            } >> "$GITHUB_OUTPUT"
+            NOTES=$(sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d')
+            echo "release_notes=$NOTES" >> $GITHUB_OUTPUT
 
         - name: Upload Release Assets
           uses: softprops/action-gh-release@v2
           with:
             tag_name: ${{ github.ref_name }}
-            body: ${{ steps.release_description.outputs.description }}  # release description
-            files: |
-              dist/**/*.dmg
-              dist/**/*.msi
-              dist/**/*.deb
-            draft: false
-            prerelease: false
-            generate_release_notes: false
+            body: ${{ steps.changelog.outputs.release_notes }}
+            files: dist/**/*.{dmg,msi,deb}
           env:
             GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
