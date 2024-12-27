@@ -23,8 +23,6 @@ runs:
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ github.ref_name }}
         body: ${{ steps.changelog.outputs.release_notes }}
-        draft: true
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
