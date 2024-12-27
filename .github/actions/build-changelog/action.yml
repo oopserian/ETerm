@@ -1,0 +1,31 @@
+name: build changelog
+description: build latest changelog description
+inputs:
+  token:
+    description: Github token
+    required: false
+    default: ''
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+    - name: Get Release Notes
+      id: changelog
+      shell: bash
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        {
+          echo 'release_notes<<EOF'
+          sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d'
+          echo EOF
+        } >> "$GITHUB_OUTPUT"
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }}
+        body: ${{ steps.changelog.outputs.release_notes }}
+        draft: true
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}

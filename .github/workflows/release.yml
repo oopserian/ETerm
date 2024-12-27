@@ -6,6 +6,14 @@ on:
       - 'v*'
 
 jobs:
+  build-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build changelog
+        uses: ./.github/actions/build-changelog
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
   build-desktop:
     strategy:
       matrix:
@@ -54,21 +62,10 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-        - name: Get Release Notes
-          id: changelog
-          run: |
-            VERSION=${GITHUB_REF#refs/tags/}
-            {
-              echo 'release_notes<<EOF'
-              sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d'
-              echo EOF
-            } >> "$GITHUB_OUTPUT"
-
         - name: Upload Release Assets
           uses: softprops/action-gh-release@v2
           with:
             tag_name: ${{ github.ref_name }}
-            body: ${{ steps.changelog.outputs.release_notes }}
             files: |
               dist/**/*.dmg
               dist/**/*.msi
