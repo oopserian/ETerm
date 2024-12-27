@@ -16,7 +16,7 @@ runs:
         VERSION=${GITHUB_REF#refs/tags/}
         {
           echo 'release_notes<<EOF'
-          sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d'
+          sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '1d;$d' | sed '/^$/d'
           echo EOF
         } >> "$GITHUB_OUTPUT"
     
