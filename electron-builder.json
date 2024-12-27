@@ -11,7 +11,12 @@
         "dist-electron/preload.js"
     ],
     "mac": {
-        "target": "dmg"
+        "target": "dmg",
+        "hardenedRuntime": true,
+        "gatekeeperAssess": false,
+        "entitlements": "build/entitlements.mac.plist",
+        "entitlementsInherit": "build/entitlements.mac.plist",
+        "identity": null
     },
     "linux": {
         "target": "deb",
