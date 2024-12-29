@@ -14,7 +14,7 @@ jobs:
       - name: Build changelog
         uses: ./.github/actions/build-changelog
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   build-desktop:
     strategy:
@@ -62,7 +62,7 @@ jobs:
         - name: Package App
           run: pnpm run pack
           env:
-            GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         - name: Upload Release Assets
           uses: softprops/action-gh-release@v2
@@ -72,4 +72,4 @@ jobs:
               dist/**/*.msi
               dist/**/*.deb
           env:
-            GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
