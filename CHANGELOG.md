@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.1.51](https://github.com/catcoal/ETerm/compare/v0.1.5...v0.1.51) - 2025-1-2
+
+### 修复
+- 修复打开弹窗报错问题
+
 ## [v0.1.5](https://github.com/catcoal/ETerm/compare/v0.1.4...v0.1.5) - 2024-12-26
 
 ### 新功能
