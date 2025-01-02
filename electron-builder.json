@@ -1,5 +1,5 @@
 {
-    "appId": "com.erian.eterm",
+    "appId": "com.eterm.app",
     "productName": "Eterm",
     "artifactName": "${productName}-${os}-${arch}.${ext}",
     "icon": "./logo.png",
