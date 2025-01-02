@@ -8,6 +8,8 @@ on:
 jobs:
   build-changelog:
     runs-on: ubuntu-latest
+    permissions:
+        contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -42,6 +44,8 @@ jobs:
             arch: x86_64
     name: Build ${{ matrix.settings.target }}
     runs-on: ${{ matrix.settings.host }}
+    permissions:
+        contents: write
     steps:
         - name: Checkout repository
           uses: actions/checkout@v4
