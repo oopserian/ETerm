@@ -1,4 +1,4 @@
-import { BrowserWindow } from "electron";
+import { BrowserWindow, shell } from "electron";
 import { Encryption, ipcMainHandle } from "../lib/utils";
 
 export default class Common {
@@ -8,5 +8,10 @@ export default class Common {
     }
     registerHandlers() {
         ipcMainHandle('decryptPassword', (_, password, iv) => Encryption.decryptPassword(password, iv));
+        ipcMainHandle('openExternalUrl', (_, url) => this.openExternalUrl(url));
+    }
+    
+    openExternalUrl(url: string) {
+        shell.openExternal(url);
     }
 }

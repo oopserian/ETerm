@@ -24,7 +24,8 @@ export const host = {
 };
 
 export const common = {
-    decryptPassword: (password: string, iv: string) => ipcInvoke('decryptPassword', password, iv)
+    decryptPassword: (password: string, iv: string) => ipcInvoke('decryptPassword', password, iv),
+    openExternalUrl: (url: string) => ipcInvoke('openExternalUrl', url)
 };
 
 export const terminal = {

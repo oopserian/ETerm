@@ -80,5 +80,9 @@ type EventPayloadMapping = {
     getCommand: {
         params: [],
         result: Record<number, CommandSnippetData>
+    },
+    openExternalUrl: {
+        params: [url: string],
+        result: void
     }
 }

@@ -2,6 +2,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TerminalNavs } from "@/modules/terminal/Navs";
 import { routes } from "@/routes";
+import { IconBrandGithub } from "@tabler/icons-react";
 import { NavLink } from "react-router-dom";
 
 export const SideNav = () => {
@@ -26,6 +27,13 @@ export const SideNav = () => {
                 }
                 <div className="flex flex-col gap-1 flex-1 overflow-auto">
                     <TerminalNavs></TerminalNavs>
+                </div>
+                <div 
+                    className="flex items-center gap-1 py-1 cursor-pointer hover:text-zinc-400 transition-colors"
+                    onClick={() => window.common.openExternalUrl('https://github.com/oopserian/ETerm')}
+                    title="访问 GitHub 仓库"
+                >
+                    <IconBrandGithub size={20}></IconBrandGithub>
                 </div>
             </div>
         </>
